@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Makabulos Nexus</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+   
+    :root{
+      --accent-1: #006400;
+      --accent-2: #228b22;
+      --accent-3: #064d2a;
+      --muted-bg: rgba(255,255,255,0.3);
+      --glass-blur: 10px;
+      --card-radius: 16px;
+      --shadow-1: 0 8px 25px rgba(0,0,0,0.15);
+      --max-width: 950px;
+      --transition: 300ms cubic-bezier(.2,.9,.2,1);
+      --glass-grad: linear-gradient(135deg, rgba(255,255,255,0.22), rgba(255,255,255,0.06));
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      overflow-x: hidden;
+      position: relative;
+      background: linear-gradient(135deg, #fdfbfb, #ebedee);
+      min-height: 100vh;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(270deg, #f9f871, #a8e6cf, #dcedc1, #ffd3b6, #ffaaa5);
+      background-size: 1000% 1000%;
+      z-index: -2;
+      animation: gradientShift 25s ease infinite;
+      filter: saturate(1.05) contrast(1.02);
+    }
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    
+    .particle {
+      position: fixed;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.75);
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
+      animation: float 20s infinite ease-in-out;
+      z-index: -1;
+      mix-blend-mode: screen;
+      opacity: .85;
+    }
+    .particle:nth-child(1) { width: 8px; height: 8px; top: 20%; left: 15%; animation-delay: 0s; }
+    .particle:nth-child(2) { width: 10px; height: 10px; top: 50%; left: 70%; animation-delay: 5s; }
+    .particle:nth-child(3) { width: 6px; height: 6px; top: 80%; left: 40%; animation-delay: 10s; }
+    .particle:nth-child(4) { width: 12px; height: 12px; top: 30%; left: 85%; animation-delay: 15s; }
+    @keyframes float {
+      0% { transform: translateY(0) translateX(0); opacity: 0.9; }
+      50% { transform: translateY(-100px) translateX(40px) rotate(.01turn); opacity: 0.5; }
+      100% { transform: translateY(0) translateX(0); opacity: 0.9; }
+    }
+
+    header {
+      background: rgba(0, 100, 0, 0.95);
+      color: #F9E79F;
+      padding: clamp(12px, 2.2vw, 25px) clamp(18px, 3.5vw, 40px);
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      box-shadow: 0 4px 20px rgba(0, 50, 0, 0.7);
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      backdrop-filter: blur(8px) saturate(1.02);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(18px, 2.4vw, 28px);
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-shadow: 0 0 10px rgba(255, 255, 200, 0.4);
+    }
+
+    .logo-container { display: flex; align-items: center; gap: 12px; }
+    .logo-container img { height: clamp(36px, 4.5vw, 50px); width:auto; object-fit:contain; }
+
+    .top-picks-btn {
+      margin-left: auto;
+      background: linear-gradient(135deg, #a5d6a7, #81c784);
+      color: #003300;
+      font-weight: 700;
+      padding: 10px 20px;
+      border-radius: 14px;
+      box-shadow: 0 6px 15px rgba(0, 77, 0, 0.4);
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .top-picks-btn:hover {
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 8px 20px rgba(0, 50, 0, 0.6);
+    }
+.register-btn {
+  margin-left: 15px;
+  background: linear-gradient(135deg, #ffeb3b, #ffc107);
+  color: #003300;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 14px;
+  box-shadow: 0 6px 15px rgba(0, 77, 0, 0.4);
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 300ms cubic-bezier(.2,.9,.2,1), box-shadow 300ms cubic-bezier(.2,.9,.2,1);
+}
+
+.register-btn:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 50, 0, 0.6);
+}
+
+
+  
+    .medal-icon {
+      position: fixed; 
+      top: calc(72px + 8px); 
+      right: 18px;
+      z-index: 1100;
+      transition: transform var(--transition), opacity var(--transition);
+      will-change: transform;
+      filter: drop-shadow(0 8px 18px rgba(0,0,0,.25));
+    }
+    .medal-icon img {
+      height: 56px;
+      width:56px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      padding:6px;
+      transition: transform 260ms ease, rotate 260ms ease;
+      transform-origin: center;
+      display:block;
+    }
+    
+    @keyframes medalBreathe {
+      0% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-6px) rotate(4deg); }
+      100% { transform: translateY(0) rotate(0deg); }
+    }
+    .medal-icon img { animation: medalBreathe 6s ease-in-out infinite; }
+    .medal-icon img:hover { transform: scale(1.12) rotate(8deg); }
+
+    .hero {
+      background: url("school.png") center/cover no-repeat;
+      border-radius: 20px;
+      padding: clamp(48px, 7vw, 100px) 40px;
+      margin: 50px auto;
+      max-width: var(--max-width);
+      text-align: center;
+      color: #ffffff;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      animation: fadeInUp 1.2s ease forwards;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,.48), rgba(0,0,0,.24));
+      border-radius: 20px;
+      z-index: 0;
+    }
+    .hero h2, .hero p { position: relative; z-index: 1; }
+    .hero h2 { font-size: clamp(28px, 4vw, 46px); font-weight: 900; margin-bottom: 15px; text-shadow: 0 4px 12px rgba(0,0,0,0.6); }
+    .hero p { font-size: clamp(14px, 1.6vw, 1.25rem); margin-bottom: 10px; text-shadow: 0 2px 6px rgba(0,0,0,0.6); }
+
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+
+   
+    .dashboard {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 25px;
+      padding: clamp(20px, 3vw, 30px);
+      align-items: stretch;
+    }
+
+    .dashboard a.card {
+      background: var(--muted-bg);
+      backdrop-filter: blur(var(--glass-blur)) saturate(1.05);
+      border-radius: 15px;
+      padding: 25px;
+      width: 240px;
+      text-align: center;
+      color: var(--accent-3);
+      text-decoration: none;
+      transition: transform var(--transition), box-shadow var(--transition), filter var(--transition);
+      box-shadow: var(--shadow-1);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+    }
+    .dashboard a.card img { height: 48px; width:48px; opacity: .98; }
+    .dashboard a.card:hover {
+      transform: translateY(-12px) scale(1.05);
+      box-shadow: 0 18px 36px rgba(0,50,0,0.22), 0 0 20px rgba(50,200,100,0.12);
+      filter: saturate(1.05);
+    }
+    .card h3 { margin: 12px 0; font-size: 20px; color: var(--accent-3); }
+
+    /* ANNOUNCEMENTS */
+    .announcements {
+      max-width: var(--max-width);
+      margin: 50px auto;
+      padding: 35px;
+      border-radius: var(--card-radius);
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow-1);
+    }
+    .announcements h2 { text-align: center; font-size: 28px; margin-bottom: 25px; color: var(--accent-3); }
+    .announcement {
+      padding: 15px 20px;
+      border-left: 6px solid var(--accent-1);
+      margin-bottom: 20px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.6);
+      transition: transform .25s ease, background .25s ease;
+    }
+    .announcement:hover { transform: translateX(8px); background: rgba(230, 255, 230, 0.7); }
+
+   
+    .mv-section {
+      max-width: var(--max-width);
+      margin: 30px auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+      padding: 22px;
+    }
+    .mv-card {
+      border-radius: 14px;
+      padding: 22px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.32), rgba(255,255,255,0.18));
+      backdrop-filter: blur(14px) saturate(1.04);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+      color: var(--accent-3);
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .mv-card h3 { margin-top:0; font-size: clamp(18px,2.2vw,24px); }
+    .mv-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    @media (max-width:880px){
+      .mv-grid { grid-template-columns: 1fr; }
+      .dashboard a.card { width: calc(50% - 30px); }
+    }
+    @media (max-width:560px){
+      .dashboard a.card { width: 100%; }
+    }
+
+    .poll-section {
+      max-width: 700px;
+      margin: 50px auto;
+      padding: 30px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow-1);
+      color: var(--accent-3);
+    }
+    .poll-section h2 { text-align: center; margin-bottom: 20px; }
+    .poll-section form label {
+      display: block;
+      margin-bottom: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 180ms ease, transform 180ms ease;
+      background: rgba(255,255,255,0.45);
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+    .poll-section form label:hover { background: rgba(200, 255, 200, 0.55); transform: translateX(4px); }
+    .poll-section button {
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+      color: #fff;
+      border: none;
+      padding: 12px 22px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform var(--transition);
+    }
+    .poll-section button:hover { transform: scale(1.05); box-shadow: 0 8px 18px rgba(0,100,0,0.4); }
+
+    #pollResults ul li { margin-bottom: 14px; }
+    #pollResults .bar {
+      width: 100%;
+      height: 15px;
+      border-radius: 6px;
+      margin-top:8px;
+      background: linear-gradient(to right, rgba(40,167,69,0.95), rgba(0,100,0,0.9));
+      transition: width 400ms ease;
+    }
+
+ 
+    footer {
+      background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin-top: 50px;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+    }
+    footer a { color: #f9f871; text-decoration: none; margin: 0 10px; transition: color 0.2s; }
+    footer a:hover { color: #fff; }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0s !important; animation-delay: 0s !important; transition-duration: 0s !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+
+  <header>
+    <div class="logo-container">
+      <img src="logooo.png" alt="Makabulos Logo" />
+      <h1>Makabulos Memorial High School</h1>
+    </div>
+    <a href="pick.html" class="top-picks-btn">MR &amp; MS MAKABULOS TOP PICKS</a>
+    <a href="registration.html" class="register-btn">REGISTER NOW!</a>
+  </header>
+
+
+  <a href="medal.html" class="medal-icon" aria-label="Medal and awards">
+    <img src="https://cdn-icons-png.flaticon.com/512/2972/2972196.png" alt="Medal Icon" />
+  </a>
+
+  <div class="hero">
+    <h2>Welcome to Makabulos Nexus!</h2>
+    <p>Get to know teachers' schedules, monitor school calendar, track your homeworks, and stay updated with school news.</p>
+    <p><em>"One School. One Platform. One Nexus."</em></p>
+  </div>
+
+  <section class="dashboard" aria-label="Main dashboard links">
+    <a href="calendar.html" class="card">
+      <img src="https://img.icons8.com/ios-filled/50/006400/calendar.png" alt="Calendar" />
+      <h3>Calendar</h3>
+      <p>Monitor School Calendar.</p>
+    </a>
+    <a href="teacherss.html" class="card">
+      <img src="https://img.icons8.com/ios-filled/50/006400/teacher.png" alt="Teachers" />
+      <h3>Teachers</h3>
+      <p>Access teacher profiles and schedules.</p>
+    </a>
+    <a href="homework.html" class="card">
+      <img src="https://img.icons8.com/ios-filled/50/006400/report-card.png" alt="Homework" />
+      <h3>Homeworks</h3>
+      <p>Track your Homeworks.</p>
+    </a>
+
+    <!-- NEW card for Facilities (as requested) -->
+    <a href="facilities.html" class="card" aria-label="School facilities">
+      <img src="https://img.icons8.com/ios-filled/50/006400/room.png" alt="Facilities" />
+      <h3>Facilities</h3>
+      <p>View school facilities & schedules.</p>
+    </a>
+
+    <a href="about.html" class="card">
+      <img src="https://img.icons8.com/ios-filled/50/006400/question.png" alt="About" />
+      <h3>About</h3>
+      <p>About Makabulos</p>
+    </a>
+  </section>
+
+  <section class="announcements" aria-live="polite">
+    <h2>Latest Announcements</h2>
+    <div class="announcement">
+      <h4>📘 Second Monthly Exams</h4>
+      <p>Scheduled on September 19 and September 22. All students are advised to check the exam schedule posted in their class dashboards.</p>
+    </div>
+    <div class="announcement">
+      <h4>🎉 Mini Tasks Day</h4>
+      <p>Scheduled on September 23-24.</p>
+    </div>
+  </section>
+
+  <!-- NEW Mission & Vision section (keeps your concept, added a styled block) -->
+  <section class="mv-section" aria-labelledby="mvHeading">
+    <div class="mv-card" id="mvHeading" style="display:flex; align-items:flex-start; gap:18px; flex-direction:column;">
+      <h3 style="margin-bottom:6px;">Our Mission & Vision</h3>
+      <div class="mv-grid" style="width:100%;">
+        <div style="padding:14px; border-radius:10px; background: rgba(255,255,255,0.45);">
+          <h4 style="margin:0 0 8px 0;">Mission</h4>
+          <p style="margin:0; font-size:0.975rem;">
+            To provide a learning environment wherein the learners will be able to demonstrate self-discipline, develop strength of character, possess adequate mastery in master subjects, respect one another, be equipped with appropriate skills, and practice the law.
+          </p>
+        </div>
+        <div style="padding:14px; border-radius:10px; background: rgba(255,255,255,0.45);">
+          <h4 style="margin:0 0 8px 0;">Vision</h4>
+          <p style="margin:0; font-size:0.975rem;">
+            To prepare the learners holistically developed and globally competent-capable of acquiring knowlegde, skills, and values for 21st century education. It is our vision to provide full support , proper guidance, and sufficient motivation in a child friendly environment to ensure a better future which the parents truly desire.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="poll-section" aria-labelledby="pollHeading">
+    <h2 id="pollHeading">What events would you like next?</h2>
+    <form id="pollForm">
+      <label><input type="radio" name="event" value="Sports Day" required> 🏀 Sports Day</label>
+      <label><input type="radio" name="event" value="Cultural Festival"> 🎭 Cultural Festival</label>
+      <label><input type="radio" name="event" value="Science Fair"> 🔬 Science Fair</label>
+      <label><input type="radio" name="event" value="Art Competition"> 🎨 Art Competition</label>
+      <br />
+      <button type="submit">Vote</button>
+    </form>
+
+    <!-- keep remove button in DOM but hidden because per-request we allow multiple votes (no per-user blocking) -->
+    <button id="removeVoteBtn" style="margin-top: 15px; display:none; background:#a00; color:#fff; border:none; padding:10px 20px; border-radius:6px; cursor:pointer;">
+      Remove Vote
+    </button>
+
+    <div id="pollResults" style="margin-top: 20px;">
+      <h3>Poll Results:</h3>
+      <ul id="resultsList" style="list-style:none; padding-left:0;"></ul>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 1939 Makabulos Memorial High School | All Rights Reserved</p>
+    <p><a href="#">Privacy Policy</a> | <a href="#">Contact Us</a></p>
+  </footer>
+
+  <script>
+    /* Poll JS: changed to allow multiple votes from same browser (no per-user blocking).
+       We keep counts in localStorage only so votes persist across reloads, but we no longer
+       block repeated votes or store a 'user last vote'. This supports multiple votes when
+       you don't have a backend database, as requested. */
+
+    const pollForm = document.getElementById('pollForm');
+    const resultsList = document.getElementById('resultsList');
+    const removeVoteBtn = document.getElementById('removeVoteBtn');
+    const pollKey = 'makabulosPollVotes';
+
+    // keep the same initial options and counts
+    let votes = JSON.parse(localStorage.getItem(pollKey)) || {
+      "Sports Day": 0,
+      "Cultural Festival": 0,
+      "Science Fair": 0,
+      "Art Competition": 0
+    };
+
+    // Helper: writes UI results
+    function displayResults() {
+      resultsList.innerHTML = '';
+      const totalVotes = Object.values(votes).reduce((a,b) => a+b, 0);
+      for (const [option, count] of Object.entries(votes)) {
+        const percent = totalVotes ? ((count / totalVotes) * 100).toFixed(1) : 0;
+        // create accessible list item and animated bar
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+            <strong style="flex:1">${option}:</strong>
+            <span style="white-space:nowrap;">${count} vote${count !== 1 ? 's' : ''} (${percent}%)</span>
+          </div>
+          <div class="bar" style="width:${percent}%; height:15px; border-radius:6px; margin-top:8px;"></div>
+        `;
+        resultsList.appendChild(li);
+      }
+    }
+
+    // Initial render
+    displayResults();
+
+    // Submit handler: allows voting multiple times (increments the count and persists)
+    pollForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const formData = new FormData(pollForm);
+      const selectedOption = formData.get('event');
+
+      if (!selectedOption) {
+        // keep behavior consistent with your original validation
+        return alert('Please select an option to vote.');
+      }
+
+      // Allow multiple votes: just increment and persist
+      if (votes.hasOwnProperty(selectedOption)) {
+        votes[selectedOption]++;
+        localStorage.setItem(pollKey, JSON.stringify(votes));
+        displayResults();
+        pollForm.reset();
+        // friendly confirmation
+        alert('Thank you for voting! You may vote again if you like.');
+      } else {
+        alert('Selected option not recognized.');
+      }
+    });
+
+   
+  </script>
+</body>
+</html>

@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Who’s Your Pick?</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+:root {
+  --primary-gradient: linear-gradient(270deg,#a8e6cf,#ffd3a5,#ffaaa5,#a8e6cf);
+  --card-bg: rgba(255,255,255,0.12);
+  --card-hover: rgba(255,215,0,0.4);
+  --text-color: #1a3d1a;
+  --vote-gradient: linear-gradient(45deg,#ffd700,#fff176,#fff59d);
+  --shadow-light: 0 8px 25px rgba(0,0,0,0.3);
+  --shadow-hover: 0 0 20px rgba(255,215,0,0.6),0 0 40px rgba(255,235,59,0.4);
+  --border-radius: 20px;
+  --transition: all 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+body {
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  background: var(--primary-gradient);
+  background-size: 600% 600%;
+  animation: gradientFlow 25s ease infinite;
+  overflow-x:hidden;
+  padding:40px 20px 100px;
+  color:#fff;
+}
+@keyframes gradientFlow {
+  0% { background-position:0% 50%; }
+  50% { background-position:100% 50%; }
+  100% { background-position:0% 50%; }
+}
+h1 {
+  font-size:3rem;
+  color:#1a3d1a;
+  text-shadow:0 0 10px rgba(255,215,0,0.6),0 0 20px rgba(255,235,59,0.4),0 0 30px rgba(255,215,0,0.3);
+  margin-bottom:40px;
+  animation: glowTitle 4s infinite alternate;
+  text-align:center;
+}
+@keyframes glowTitle {
+  from { text-shadow:0 0 10px rgba(255,215,0,0.6),0 0 20px rgba(255,235,59,0.4); }
+  to { text-shadow:0 0 20px rgba(255,255,255,0.8),0 0 30px rgba(255,215,0,0.5); }
+}
+h2.section-title {
+  font-size:2rem;
+  margin:30px 0 20px;
+  text-shadow:0 0 8px rgba(255,215,0,0.5);
+  width:100%;
+  text-align:center;
+  letter-spacing:2px;
+  animation: fadeIn 2s ease;
+}
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(20px); }
+  to { opacity:1; transform:translateY(0); }
+}
+.container {
+  display:flex;
+  gap:30px;
+  flex-wrap:wrap;
+  justify-content:center;
+  z-index:2;
+  max-width:1200px;
+  margin-bottom:40px;
+}
+.card {
+  width:280px;
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  text-align:center;
+  box-shadow: var(--shadow-light);
+  backdrop-filter:blur(14px);
+  transition: var(--transition);
+  position:relative;
+  overflow:hidden;
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  perspective:1000px;
+  max-height:420px;
+  border:2px solid transparent;
+  padding:20px;
+}
+.card::before {
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius: var(--border-radius);
+  background: conic-gradient(from 0deg, rgba(255,215,0,0.2), transparent, rgba(0,255,149,0.2), transparent, rgba(255,215,0,0.2));
+  animation: spin 12s linear infinite;
+  z-index:0;
+}
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+.card:hover {
+  transform: translateY(-10px) rotateX(5deg) rotateY(5deg) scale(1.05);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--card-hover);
+}
+.card.expanded { max-height:700px; }
+.card-content {
+  position:relative;
+  z-index:2;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  width:100%;
+  padding:0;
+}
+.card img {
+  width: 200px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 15px;
+  margin-top: 60px;  
+  margin-bottom: 15px;
+  transition: transform 0.4s ease;
+}
+/* REPLACE your existing .crown and @keyframes shine with this */
+.crown {
+  position: absolute;
+  top: 10px;                 /* move crown down/up if needed */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px !important;    /* <-- set the visible size here */
+  height: 30px !important;   /* <-- change to smaller/larger values */
+  max-width: 30px;
+  max-height: 30px;
+  object-fit: contain;
+  z-index: 3;
+  pointer-events: none;
+  animation: crownShine 2s infinite alternate;
+}
+
+@keyframes crownShine {
+  0% { transform: translateX(-50%) scale(0.95); filter: drop-shadow(0 0 4px gold); }
+  100% { transform: translateX(-50%) scale(1.05); filter: drop-shadow(0 0 10px gold); }
+}
+
+.card h3 {
+  color:#fff;
+  margin:0 0 10px;
+  font-size:1.1rem;
+  font-weight:bold;
+  text-align:center;
+}
+.votes {
+  color:#fff;
+  font-weight:bold;
+  margin-bottom:15px;
+  font-size:1rem;
+}
+.vote-btn, .back-home-btn {
+  padding:12px 24px;
+  border:none;
+  border-radius:30px;
+  background: var(--vote-gradient);
+  font-size:1rem;
+  font-weight:bold;
+  cursor:pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  text-decoration:none;
+  color:black;
+  display:inline-block;
+  text-align:center;
+  margin-bottom:10px;
+  white-space:nowrap;
+}
+.vote-btn:hover, .back-home-btn:hover {
+  transform: scale(1.05);
+  box-shadow:0 0 15px rgba(255,215,0,0.6),0 0 30px rgba(255,235,59,0.4);
+}
+.back-home-btn {
+  margin-top:20px;
+  max-width:200px;
+}
+.candidate-info {
+  max-height:0;
+  overflow:hidden;
+  opacity:0;
+  transition:max-height 0.6s ease, opacity 0.6s ease;
+  color: var(--text-color);
+  padding:0 15px;
+  text-align:left;
+  width:100%;
+  font-size:0.95rem;
+  line-height:1.4;
+}
+.card.expanded .candidate-info {
+  max-height:200px;
+  opacity:1;
+  margin-top:10px;
+  padding:15px;
+  background: rgba(255,255,255,0.05);
+  border-radius:10px;
+  backdrop-filter:blur(10px);
+}
+.candidate-info p {
+  margin:8px 0;
+  word-wrap: break-word;
+}
+.sparkle {
+  position:absolute;
+  width:6px;
+  height:6px;
+  background: rgba(255,255,255,0.8);
+  border-radius:50%;
+  box-shadow:0 0 8px rgba(255,255,255,0.6),0 0 16px rgba(255,255,0,0.4);
+  animation: floatUp 8s linear infinite;
+}
+@keyframes floatUp {
+  0% { transform:translateY(100vh) scale(0.5); opacity:0; }
+  20% { opacity:0.8; }
+  80% { opacity:0.8; }
+  100% { transform:translateY(-10vh) scale(1.2); opacity:0; }
+}
+body::after {
+  content:"";
+  position:fixed;
+  top:-50%;
+  left:-50%;
+  width:200%;
+  height:200%;
+  background: radial-gradient(circle at center, rgba(255,215,0,0.1), transparent 70%);
+  animation: spotlight 10s infinite alternate;
+  pointer-events:none;
+  z-index:0;
+}
+@media (max-width: 768px) {
+  .card { width:100%; max-width:300px; }
+  .card img { width:180px; height:180px; }
+  h1 { font-size:2.5rem; }
+  h2.section-title { font-size:1.5rem; }
+}
+</style>
+</head>
+<body>
+<h1>👑 Who’s Your Pick? 👑</h1>
+<h2 class="section-title">Male Candidates</h2>
+<div class="container" id="male-candidates">
+  <div class="card" data-id="jan-franco">
+    <div class="card-content">
+      <img src="MAGNO.jpg" alt="Jan Franco A. Magno" />
+      <h3>Jan Franco A. Magno</h3>
+      <p class="votes">Votes: 0</p>
+      <button class="vote-btn">Vote</button>
+      <div class="candidate-info"><p><strong>Age:</strong> 13</p><p><strong>Hobbies:</strong> Playing sepak takraw</p><p><strong>Section:</strong> 7-Aguinaldo</p></div>
+    </div>
+  </div>
+<div class="card" data-id="paul-elilio">
+    <div class="card-content">
+      <img src="paul.jfif" alt="Paul Elilio" />
+      <h3>Paul Elilio</h3>
+      <p class="votes">Votes: 0</p>
+      <button class="vote-btn">Vote</button>
+      <div class="candidate-info"><p><strong>Age:</strong> 13</p><p><strong>Hobbies:</strong> Playing video games</p><p><strong>Section:</strong> 7-Rizal</p></div>
+    </div>
+  </div>
+  <div class="card" data-id="john-dominic">
+    <div class="card-content">
+      <img src="francisco.jfif" alt="John Dominic Francisco" />
+      <h3>John Dominic Francisco</h3>
+      <p class="votes">Votes: 0</p>
+      <button class="vote-btn">Vote</button>
+      <div class="candidate-info"><p><strong>Age:</strong> 13</p><p><strong>Hobbies:</strong> Playing video games</p><p><strong>Section:</strong> 8-Gomez</p></div>
+    </div>
+  </div>
+<div class="card" data-id="bejay-pablo">
+    <div class="card-content">
+      <img src="pablo.jfif" alt="Bejay Pablo" />
+      <h3>Bejay Pablo</h3>
+      <p class="votes">Votes: 0</p>
+      <button class="vote-btn">Vote</button>
+      <div class="candidate-info"><p><strong>Age:</strong> 13</p><p><strong>Hobbies:</strong> Playing video games</p><p><strong>Section:</strong> 8-Burgos</p></div>
+    </div>
+  </div>
+<div class="card" data-id="james-pajela">
+    <div class="card-content">
+      <img src="https://img.icons8.com/?size=100&id=7820&format=png&color=000000" alt="James Pajela" />
+      <h3>James Pajela</h3>
+      <p class="votes">Votes: 0</p>
+      <button class="vote-btn">Vote</button>
+      <div class="candidate-info"><p><strong>Age:</strong> 13</p><p><strong>Hobbies:</strong> Listening to music</p><p><strong>Section:</strong> 9-Magsaysay</p></div>
+    </div>
+  </div>
+  <div class="card" data-id="william-ganiban">
+    <div class="card-content">
+      <img src="william.jfif" alt="William Charles Ganiban" />
+      <h3>William Charles Ganiban</h3>
+      <p class="votes">Votes: 0</p>
+      <button class="vote-btn">Vote</button>
+      <div class="candidate-info"><p><strong>Age:</strong> 15</p><p><strong>Hobbies:</strong> Playing online games</p><p><strong>Section:</strong> 10-Datu</p></div>
+    </div>
+  </div>
+ <div class="card" data-id="klifford-gapatan">
+    <div class="card-content">
+      <img src="klifford.jfif" alt="Klifford Gapatan" />
+      <h3>Klifford Gapatan</h3>
+      <p class="votes">Votes: 0</p>
+      <button class="vote-btn">Vote</button>
+      <div class="candidate-info"><p><strong>Age:</strong> 15</p><p><strong>Hobbies:</strong> Listening to music</p><p><strong>Section:</strong> 10-Lakan</p></div>
+    </div>
+  </div>
+  <div class="card" data-id="hamzah-reganit">
+    <div class="card-content">
+      <img src="ham.jfif" alt="Hamzah Reganit" />
+      <h3>Hamzah Reganit</h3>
+      <p class="votes">Votes: 0</p>
+      <button class="vote-btn">Vote</button>
+      <div class="candidate-info"><p><strong>Age:</strong> 16</p><p><strong>Hobbies:</strong> Badminton, Mobile Legends, Eating</p><p><strong>Section:</strong> 11-San Juan</p></div>
+    </div>
+</div>
+ <div class="card" data-id="vlash-endrado">
+    <div class="card-content">
+      <img src="vlash.jfif" alt="Vlash Endrado" />
+      <h3>Vlash Endrado</h3>
+      <p class="votes">Votes: 0</p>
+      <button class="vote-btn">Vote</button>
+      <div class="candidate-info"><p><strong>Age:</strong> 16</p><p><strong>Hobbies:</strong> Listening to music, watching animes</p><p><strong>Section:</strong> 11-Laurel</p></div>
+  </div>
+</div>
+ <div class="card" data-id="denver-evangelista">
+    <div class="card-content">
+      <img src="denver.jpg" alt="Denver Evangelista" />
+      <h3>Denver Evangelista</h3>
+      <p class="votes">Votes: 0</p>
+      <button class="vote-btn">Vote</button>
+      <div class="candidate-info"><p><strong>Age:</strong> 17</p><p><strong>Hobbies:</strong> Singing & Listening to Music</p><p><strong>Section:</strong> 12-STEM</p></div>
+    </div>
+  </div>
+  <div class="card" data-id="marky-bermeo">
+    <div class="card-content">
+      <img src="marky.jfif" alt="Marky Jovince Bermeo" />
+      <h3>Marky Jovince Bermeo</h3>
+      <p class="votes">Votes: 0</p>
+      <button class="vote-btn">Vote</button>
+      <div class="candidate-info"><p><strong>Age:</strong> 17</p><p><strong>Hobbies:</strong> Singing & Listening to Music</p><p><strong>Section:</strong> 12-HUMSS</p></div>
+    </div>
+  </div>
+</div>
+
+<h2 class="section-title">Female Candidates</h2>
+<div class="container" id="female-candidates">
+  <div class="card" data-id="queah-guevarra">
+    <div class="card-content">
+      <img src="https://img.icons8.com/?size=100&id=7823&format=png&color=000000" alt="Queah Mhae Guevarra" />
+      <h3>Queah Mhae Guevarra</h3>
+      <p class="votes">Votes: 0</p>
+      <button class="vote-btn">Vote</button>
+      <div class="candidate-info"><p><strong>Age:</strong> 13</p><p><strong>Hobbies:</strong> Making Flowers</p><p><strong>Section:</strong> 7-Aguinaldo</p></div>
+    </div>
+  </div>
+<div class="card" data-id="Zyrich Bergonio">
+    <div class="card-content">
+      <img src="zyrich.jfif" alt="Zyrich Bergonio" />
+      <h3>Zyrich Bergonio</h3>
+      <p class="votes">Votes: 0</p>
+      <button class="vote-btn">Vote</button>
+      <div class="candidate-info"><p><strong>Age:</strong> 13</p><p><strong>Hobbies:</strong> Making Flowers</p><p><strong>Section:</strong> 7-Rizal</p></div>
+    </div>
+  </div>
+  <div class="card" data-id="ariana-damaso">
+    <div class="card-content">
+      <img src="https://img.icons8.com/?size=100&id=7823&format=png&color=000000" alt="Ariana Khrichelle Damaso" />
+      <h3>Ariana Khrichelle Damaso</h3>
+      <p class="votes">Votes: 0</p>
+      <button class="vote-btn">Vote</button>
+      <div class="candidate-info"><p><strong>Age:</strong> 13</p><p><strong>Hobbies:</strong> Playing Roblox</p><p><strong>Section:</strong> 8-Gomez</p></div>
+    </div>
+  </div>
+  <div class="card" data-id="racquel-canibas">
+    <div class="card-content">
+      <img src="canibas.jfif" alt="Ma. Racquel Canibas" />
+      <h3>Ma. Racquel Canibas</h3>
+      <p class="votes">Votes: 0</p>
+      <button class="vote-btn">Vote</button>
+      <div class="candidate-info"><p><strong>Age:</strong> 13</p><p><strong>Hobbies:</strong> Sleep</p><p><strong>Section:</strong> 8-Burgos</p></div>
+    </div>
+  </div>
+<div class="card" data-id="Lian-Torre">
+    <div class="card-content">
+      <img src="https://img.icons8.com/?size=100&id=7823&format=png&color=000000" alt="Lian Dela Torre" />
+      <h3>Lian Dela Torre</h3>
+      <p class="votes">Votes: 0</p>
+      <button class="vote-btn">Vote</button>
+      <div class="candidate-info"><p><strong>Age:</strong> 13</p><p><strong>Hobbies:</strong> Sleep</p><p><strong>Section:</strong> 8-Gomez</p></div>
+    </div>
+  </div>
+  <div class="card" data-id="marbi-treseni">
+    <div class="card-content">
+      <img src="marbi.jfif" alt="Marbi Jodi Treseni" />
+      <h3>Marbi Jodi Treseni</h3>
+      <p class="votes">Votes: 0</p>
+      <button class="vote-btn">Vote</button>
+      <div class="candidate-info"><p><strong>Age:</strong> 15</p><p><strong>Hobbies:</strong> Cooking</p><p><strong>Section:</strong> 10-Datu</p></div>
+    </div>
+  </div>
+ <div class="card" data-id="cyrhil-cardona">
+    <div class="card-content">
+      <img src="cyrhil.jfif" alt="Cyrhil Cardona" />
+      <h3>Cyrhil Cardona</h3>
+      <p class="votes">Votes: 0</p>
+      <button class="vote-btn">Vote</button>
+      <div class="candidate-info"><p><strong>Age:</strong> 15</p><p><strong>Hobbies:</strong> Cooking</p><p><strong>Section:</strong> 10-Lakan</p></div>
+    </div>
+  </div>
+  <div class="card" data-id="ezhra-pagaragan">
+    <div class="card-content">
+      <img src="https://img.icons8.com/?size=100&id=7823&format=png&color=000000" alt="Ezhra Xena Pagaragan" />
+      <h3>Ezhra Xena Pagaragan</h3>
+      <p class="votes">Votes: 0</p>
+      <button class="vote-btn">Vote</button>
+      <div class="candidate-info"><p><strong>Age:</strong> 16</p><p><strong>Hobbies:</strong> Singing</p><p><strong>Section:</strong> 11-Laurel</p></div>
+    </div>
+  </div>
+  <div class="card" data-id="sophia-munoz">
+    <div class="card-content">
+      <img src="https://img.icons8.com/?size=100&id=7823&format=png&color=000000" alt="Sophia Corazon Munoz" />
+      <h3>Sophia Corazon Munoz</h3>
+      <p class="votes">Votes: 0</p>
+      <button class="vote-btn">Vote</button>
+      <div class="candidate-info"><p><strong>Age:</strong> 15</p><p><strong>Hobbies:</strong> Playing Table Tennis & Guitar</p><p><strong>Section:</strong>11-San Juan</p></div>
+    </div>
+  </div>
+ <div class="card" data-id="hannah-saborboro">
+    <div class="card-content">
+      <img src="hannah.jpg" alt="Hannah Denise Saborboro" />
+      <h3>Hannah Denise Saborboro</h3>
+      <p class="votes">Votes: 0</p>
+      <button class="vote-btn">Vote</button>
+      <div class="candidate-info"><p><strong>Age:</strong> 17</p><p><strong>Hobbies:</strong> Listening to music</p><p><strong>Section:</strong>12-STEM</p></div>
+    </div>
+  </div>
+  <div class="card" data-id="chriza-dejesus">
+    <div class="card-content">
+      <img src="https://img.icons8.com/?size=100&id=7823&format=png&color=000000" alt="Chriza De Jesus" />
+      <h3>Chriza De Jesus</h3>
+      <p class="votes">Votes: 0</p>
+      <button class="vote-btn">Vote</button>
+      <div class="candidate-info"><p><strong>Age:</strong> 16</p><p><strong>Hobbies:</strong> Watching K-Dramas</p><p><strong>Section:</strong> 12-HUMSS</p></div>
+    </div>
+  </div>
+</div>
+
+<a href="mainwebpage.html" class="back-home-btn">Back Home</a>
+
+<div class="sparkle" style="left:10%;animation-delay:0s;"></div>
+<div class="sparkle" style="left:30%;animation-delay:2s;"></div>
+<div class="sparkle" style="left:50%;animation-delay:4s;"></div>
+<div class="sparkle" style="left:70%;animation-delay:1s;"></div>
+<div class="sparkle" style="left:90%;animation-delay:3s;"></div>
+
+<script>
+const maleCards = document.querySelectorAll('#male-candidates .card');
+const femaleCards = document.querySelectorAll('#female-candidates .card');
+const voteButtons = document.querySelectorAll('.vote-btn');
+
+function getVotesFromStorage(id){ return parseInt(localStorage.getItem(id)) || 0; }
+function saveVotesToStorage(id,votes){ localStorage.setItem(id,votes); }
+function updateVotesDisplay(card){ const id=card.dataset.id; card.querySelector('.votes').textContent=`Votes: ${getVotesFromStorage(id)}`; }
+function updateCrown(cards){
+  let maxVotes=-1, topCard=null;
+  cards.forEach(card=>{ const votes=getVotesFromStorage(card.dataset.id); if(votes>maxVotes){ maxVotes=votes; topCard=card; }});
+  cards.forEach(card=>{ const crown=card.querySelector('.crown'); const votes=getVotesFromStorage(card.dataset.id); if(card===topCard && votes>0){ if(!crown){ const img=document.createElement('img'); img.src='https://cdn-icons-png.flaticon.com/512/1828/1828884.png'; img.className='crown'; card.querySelector('.card-content').appendChild(img); }} else if(crown){ crown.remove(); }});
+}
+[...maleCards,...femaleCards].forEach(card=> updateVotesDisplay(card));
+voteButtons.forEach(btn=>{ btn.addEventListener('click',e=>{ e.stopPropagation(); const card=btn.closest('.card'); const id=card.dataset.id; let votes=getVotesFromStorage(id); votes++; saveVotesToStorage(id,votes); updateVotesDisplay(card); updateCrown(maleCards); updateCrown(femaleCards); });});
+document.querySelectorAll('.card').forEach(card=>{ card.addEventListener('click',e=>{ if(e.target.closest('.vote-btn')) return; card.classList.toggle('expanded'); });});
+updateCrown(maleCards);
+updateCrown(femaleCards);
+</script>
+</body>
+</html>

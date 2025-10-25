@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>View Registrations (Admin Only)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      min-height: 100vh;
+      padding: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(270deg, #fdfbfb, #e8f5e9, #f1f8e9);
+      background-size: 600% 600%;
+      animation: gradientShift 15s ease infinite;
+    }
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .lock-screen, .list-container {
+      max-width: 550px;
+      width: 100%;
+      background: rgba(255,255,255,0.7);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+      text-align: center;
+      backdrop-filter: blur(12px);
+      border: 2px solid rgba(255,255,255,0.3);
+      animation: floaty 6s ease-in-out infinite;
+    }
+    @keyframes floaty {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+    h1 {
+      color: #006400;
+      margin-bottom: 20px;
+      font-size: 28px;
+      font-weight: 900;
+      text-shadow: 1px 1px 6px rgba(0,100,0,0.2);
+      position: relative;
+    }
+    h1::after {
+      content: "";
+      display: block;
+      width: 60px;
+      height: 4px;
+      margin: 10px auto 0;
+      border-radius: 2px;
+      background: linear-gradient(90deg, #006400, #00c853);
+      animation: shimmer 3s linear infinite;
+    }
+    @keyframes shimmer {
+      0% { transform: scaleX(0); opacity: 0.5; }
+      50% { transform: scaleX(1); opacity: 1; }
+      100% { transform: scaleX(0); opacity: 0.5; }
+    }
+    input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin: 15px 0;
+      border-radius: 12px;
+      border: 2px solid transparent;
+      font-size: 15px;
+      background: rgba(255,255,255,0.85);
+      transition: all 0.3s ease;
+    }
+    input[type="password"]:focus {
+      border-color: #00c853;
+      box-shadow: 0 0 12px rgba(0,200,83,0.4);
+      outline: none;
+      background: #ffffff;
+    }
+    .unlock-btn, .not-admin-btn, .back-home-btn {
+      display: inline-block;
+      margin: 10px 5px;
+      font-weight: 700;
+      padding: 12px 25px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .unlock-btn {
+      background: linear-gradient(135deg, #006400, #228b22);
+      color: #fff;
+    }
+    .not-admin-btn {
+      background: linear-gradient(135deg, #ffeb3b, #ffc107);
+      color: #003300;
+    }
+    .back-home-btn {
+      background: linear-gradient(135deg, #2196f3, #1976d2);
+      color: #fff;
+    }
+    .unlock-btn::before, .not-admin-btn::before, .back-home-btn::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: rgba(255,255,255,0.3);
+      transform: skewX(-30deg);
+      transition: left 0.6s ease;
+    }
+    .unlock-btn:hover::before, .not-admin-btn:hover::before, .back-home-btn:hover::before {
+      left: 100%;
+    }
+    .unlock-btn:hover, .not-admin-btn:hover, .back-home-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+    .error {
+      color: red;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+    .card {
+      background: rgba(255,255,255,0.95);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+      text-align: left;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      border-left: 5px solid #00c853;
+    }
+    .card:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 12px 26px rgba(0,0,0,0.25);
+    }
+    .card strong {
+      color: #064d2a;
+    }
+    .empty {
+      text-align: center;
+      color: #888;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="lock-screen" id="lockScreen">
+    <h1>Admin Access Required</h1>
+    <input type="password" id="adminPassword" placeholder="Enter Password" />
+    <div>
+      <button class="unlock-btn" onclick="unlock()">Unlock</button>
+      <button class="not-admin-btn" onclick="goToForm()">Not Admin? Submit Your Form</button>
+    </div>
+    <p id="errorMsg" class="error"></p>
+  </div>
+
+  <div class="list-container" id="listContainer" style="display: none;">
+    <h1>Submitted Registrations</h1>
+    <div id="registrationsList"></div>
+    <button class="back-home-btn" onclick="goHome()">Back to Home</button>
+  </div>
+
+  <script>
+    function unlock() {
+      const password = document.getElementById('adminPassword').value;
+      if (password === "Makabulos1939") {
+        document.getElementById('lockScreen').style.display = 'none';
+        document.getElementById('listContainer').style.display = 'block';
+        loadRegistrations();
+      } else {
+        document.getElementById('errorMsg').textContent = "Incorrect password!";
+      }
+    }
+    function goToForm() {
+      window.location.href = "registration.html"; 
+    }
+    function goHome() {
+      window.location.href = "mainwebpage.html"; 
+    }
+    function loadRegistrations() {
+      const submissions = JSON.parse(localStorage.getItem('registrations')) || [];
+      const list = document.getElementById('registrationsList');
+      if (submissions.length === 0) {
+        list.innerHTML = '<p class="empty">No registrations submitted yet.</p>';
+      } else {
+        submissions.forEach(sub => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <p><strong>Name:</strong> ${sub.name}</p>
+            <p><strong>Grade:</strong> ${sub.grade}</p>
+            <p><strong>DOB:</strong> ${sub.dob}</p>
+            <p><strong>Gender:</strong> ${sub.gender}</p>
+            <p><strong>Address:</strong> ${sub.address}</p>
+            <p><strong>Parent/Guardian:</strong> ${sub.parent}</p>
+            <p><strong>Contact:</strong> ${sub.contact}</p>
+          `;
+          list.appendChild(card);
+        });
+      }
+    }
+  </script>
+</body>
+</html>

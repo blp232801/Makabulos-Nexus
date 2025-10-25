@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>About Makabulos Memorial High School</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, #D4EFDF, #F9E79F, #FAD7A0);
+      color: #004d00;
+      padding: 40px 20px 80px;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .back-home {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: #228B22;
+      color: #F9E79F;
+      padding: 10px 18px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1rem;
+      text-decoration: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      transition: all 0.3s ease;
+      z-index: 10;
+      user-select: none;
+    }
+    .back-home:hover {
+      background: #145214;
+      transform: scale(1.05);
+    }
+
+    h1, h2 {
+      text-align: center;
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.15);
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 40px;
+      color: #006400;
+      animation: fadeInDown 1s ease;
+    }
+
+    h2 {
+      font-size: 2rem;
+      color: #228B22;
+      position: relative;
+    }
+    h2::after {
+      content: "";
+      display: block;
+      width: 60px;
+      height: 4px;
+      background: #228B22;
+      margin: 10px auto 0;
+      border-radius: 2px;
+      animation: expand 1s ease;
+    }
+
+    .content {
+      max-width: 900px;
+      margin: 0 auto 60px;
+      background: linear-gradient(135deg, #f0f8e8, #ffffff);
+      border-radius: 20px;
+      padding: 40px 50px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      line-height: 1.8;
+      font-size: 1.15rem;
+      color: #2e7d32;
+      transition: all 0.6s ease;
+      animation: fadeInUp 1.2s ease;
+    }
+    .content p {
+      margin-bottom: 18px;
+      text-align: justify;
+    }
+    .content:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    }
+
+    .quiz-container {
+      max-width: 700px;
+      margin: 0 auto;
+      background: linear-gradient(135deg, #f0f8e8, #ffffff);
+      border-radius: 20px;
+      padding: 30px 40px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+      animation: fadeInUp 1.2s ease;
+    }
+
+    .quiz-question {
+      font-weight: 700;
+      font-size: 1.25rem;
+      margin-bottom: 15px;
+      color: #004d00;
+    }
+
+    .options {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 25px;
+    }
+
+    .options li {
+      margin-bottom: 12px;
+    }
+
+    .options label {
+      cursor: pointer;
+      font-weight: 600;
+      color: #2e7d32;
+      user-select: none;
+      display: block;
+      padding: 12px 18px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #a3c293, #cce5b8);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+    }
+    .options input[type="radio"] {
+      margin-right: 10px;
+      accent-color: #004d00;
+    }
+    .options label:hover {
+      background: linear-gradient(135deg, #7aa05b, #a3c293);
+      transform: translateX(5px);
+    }
+
+    button#submitQuiz {
+      background: linear-gradient(135deg, #228B22, #145214);
+      color: #F9E79F;
+      border: none;
+      padding: 14px 32px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      border-radius: 16px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+      display: block;
+      margin: 0 auto 20px;
+    }
+    button#submitQuiz:hover {
+      background: #145214;
+      transform: scale(1.07);
+    }
+
+    .quiz-result {
+      text-align: center;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #004d00;
+      margin-top: 20px;
+      min-height: 2em;
+      user-select: none;
+      animation: fadeIn 0.6s ease;
+    }
+
+    .floating-shape {
+      position: fixed;
+      opacity: 0.12;
+      z-index: -1;
+      animation: float 20s infinite ease-in-out;
+      user-select: none;
+    }
+    .shape-book {
+      width: 140px;
+      height: 140px;
+      background: #228B22;
+      clip-path: polygon(10% 10%, 90% 10%, 90% 90%, 10% 90%, 10% 10%, 50% 50%);
+      top: 15%;
+      left: 5%;
+      animation-duration: 22s;
+      border-radius: 12px;
+      box-shadow: inset 0 0 15px #a3c293;
+    }
+    .shape-pencil {
+      width: 120px;
+      height: 30px;
+      background: #ffcc00;
+      top: 70%;
+      left: 80%;
+      animation-duration: 18s;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #d4b300;
+      transform-origin: center;
+      position: fixed;
+    }
+    .shape-pencil::before {
+      content: "";
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 15px 15px 0 0;
+      border-color: #b38600 transparent transparent transparent;
+      top: 0;
+      left: 0;
+      border-radius: 2px;
+    }
+    .shape-cap {
+      width: 130px;
+      height: 80px;
+      background: #004d00;
+      clip-path: polygon(50% 0%, 100% 25%, 75% 100%, 25% 100%, 0% 25%);
+      top: 40%;
+      left: 60%;
+      animation-duration: 25s;
+      border-radius: 8px;
+      box-shadow: inset 0 0 15px #228B22;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-30px) rotate(180deg); }
+      100% { transform: translateY(0px) rotate(360deg); }
+    }
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(40px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInDown {
+      0% { opacity: 0; transform: translateY(-40px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes expand {
+      from { width: 0; }
+      to { width: 60px; }
+    }
+
+    @media (max-width: 700px) {
+      body {
+        padding: 20px 10px 60px;
+      }
+      .content, .quiz-container {
+        padding: 20px 25px;
+      }
+      h1 {
+        font-size: 2rem;
+      }
+      h2 {
+        font-size: 1.5rem;
+      }
+      .shape-book, .shape-pencil, .shape-cap {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <a href="mainwebpage.html" class="back-home" title="Back to Home">← Back Home</a>
+
+  <h1>About Makabulos Memorial High School</h1>
+
+  <section class="content" aria-label="School Information and History" id="infoSection">
+    <h2>Our History</h2>
+    <p>
+      Makabulos Memorial High School, established in 1939, stands as one of the enduring educational institutions in Victoria, Tarlac. Located along Rizal Street, the school is recognized by the Department of Education (DepEd) and continues to provide quality secondary education under the K–12 curriculum. Serving students from Grades 7 to 12, the school prepares learners for higher studies, technical careers, or immediate employment, while instilling values that shape responsible and patriotic citizens.
+    </p>
+    <p>
+      The school carries the proud name of General Francisco Makabulos, a revolutionary hero and son of Tarlac. General Makabulos played a crucial role during the Philippine Revolution against Spanish colonial rule. Known for his courage, vision, and dedication to freedom, he established a provisional revolutionary government in Central Luzon, demonstrating his leadership and deep commitment to the cause of independence. By naming the institution in his honor, the school ensures that his legacy of patriotism, bravery, and nation-building lives on in every generation of students.
+    </p>
+    <p>
+      From its early beginnings in 1939 under its first director, Sinforoso Pascual, Makabulos Memorial High School has grown alongside the community of Victoria. Over the decades, it has adapted to the changing needs of the nation’s education system, most notably embracing the Enhanced Basic Education Act of 2013 (K–12). Today, the school offers both Junior High School and Senior High School programs, with specialized strands such as STEM (Science, Technology, Engineering, and Mathematics) and HUMSS (Humanities and Social Sciences) to equip students for diverse futures.
+    </p>
+    <p>
+      Guided by the mission of providing holistic education, the school blends academic excellence with character formation and life skills. Inspired by General Makabulos’s example, it emphasizes discipline, courage, responsibility, and service to the community—values that reflect the revolutionary spirit of its namesake. Under the leadership of Principal Jaime Pascual, the dedicated faculty continues to nurture students in an environment that encourages both intellectual growth and moral integrity.
+    </p>
+    <p>
+      Situated in the heart of Victoria and close to landmarks such as the Victoria Public Auditorium and Iglesia ni Cristo, the school is a familiar and central institution in the town. For more than eight decades, Makabulos Memorial High School has stood not only as a center of learning but also as a living tribute to General Francisco Makabulos, ensuring that his heroism continues to inspire young Filipinos to dream, learn, and serve their nation.
+    </p>
+  </section>
+
+  <section class="quiz-container" aria-label="School Knowledge Quiz">
+    <h2>How Well Do You Know Your School?</h2>
+    <form id="quizForm" aria-describedby="quizResult"></form>
+    <button type="submit" id="submitQuiz" aria-label="Submit Quiz" form="quizForm">Submit Answers</button>
+    <div class="quiz-result" id="quizResult" aria-live="polite" role="alert"></div>
+  </section>
+
+  <div class="floating-shape shape-book" aria-hidden="true"></div>
+  <div class="floating-shape shape-pencil" aria-hidden="true"></div>
+  <div class="floating-shape shape-cap" aria-hidden="true"></div>
+
+  <script>
+    // Multiple quiz sets
+    const quizSets = [
+      {
+        questions: [
+          {
+            id: 'q1',
+            question: "1. In what year was Makabulos Memorial High School established?",
+            options: {
+              a: "1939",
+              b: "1965",
+              c: "1978",
+              d: "1985"
+            },
+            correct: 'a'
+          },
+          {
+            id: 'q2',
+            question: "2. Who is the school named after?",
+            options: {
+              a: "A famous artist",
+              b: "A former principal",
+              c: "A revolutionary hero",
+              d: "A national president"
+            },
+            correct: 'c'
+          },
+          {
+            id: 'q3',
+            question: "3. What is the school’s mission focused on?",
+            options: {
+              a: "Academic excellence and character development",
+              b: "Sports achievements only",
+              c: "Technology innovation only",
+              d: "Entertainment and arts"
+            },
+            correct: 'a'
+          },
+          {
+            id: 'q4',
+            question: "4. Where is Makabulos Memorial High School located?",
+            options: {
+              a: "Macabulos, Tarlac",
+              b: "Bulo, Victoria, Tarlac",
+              c: "San Jacinto, Victoria, Tarlac",
+              d: "San Fernando, Victoria, Tarlac"
+            },
+            correct: 'd'
+          }
+        ]
+      },
+      {
+        questions: [
+          {
+            id: 'q1',
+            question: "1. What color is prominently used in the school’s logo?",
+            options: {
+              a: "Blue",
+              b: "Green",
+              c: "Red",
+              d: "Gold"
+            },
+            correct: 'd'
+          },
+          {
+            id: 'q2',
+            question: "2. Which subject is emphasized at Makabulos Memorial High School?",
+            options: {
+              a: "Major Subjects",
+              b: "History",
+              c: "Science and Technology",
+              d: "Physical Education"
+            },
+            correct: 'a'
+          },
+          {
+            id: 'q3',
+            question: "3. What is the mascot or symbol of the school?",
+            options: {
+              a: "Eagle",
+              b: "Lion",
+              c: "Makabulos Warrior",
+              d: "Tiger"
+            },
+            correct: 'a'
+          },
+          {
+            id: 'q4',
+            question: "4. Who is the first director of MMHS?",
+            options: {
+              a: "Micheal Angelo Pascual",
+              b: "Francisco Makabulos",
+              c: "Sinforoso Pascual",
+              d: "Engr. Briccio Pascual"
+            },
+            correct: 'c'
+          }
+        ]
+      },
+      {
+        questions: [
+          {
+            id: 'q1',
+            question: "1. Who was General Francisco Makabulos?",
+            options: {
+              a: "A Philippine president",
+              b: "A revolutionary hero from Tarlac",
+              c: "The school’s first director",
+              d: "A Spanish governor"
+            },
+            correct: 'b'
+          },
+          {
+            id: 'q2',
+            question: "2. What government did General Makabulos establish in Central Luzon?",
+            options: {
+              a: "A colonial council",
+              b: "A provisional revolutionary government",
+              c: "A student council",
+              d: "A barangay assembly"
+            },
+            correct: 'b'
+          },
+          {
+            id: 'q3',
+            question: "3. What values does the school emphasize, inspired by General Makabulos?",
+            options: {
+              a: "Discipline, courage, responsibility, and service",
+              b: "Fame and wealth",
+              c: "Entertainment and arts",
+              d: "Sports and games only"
+            },
+            correct: 'a'
+          },
+          {
+            id: 'q4',
+            question: "4. How long has the school been serving as a tribute to General Makabulos?",
+            options: {
+              a: "Over eight decades",
+              b: "Two decades",
+              c: "Five years",
+              d: "A century"
+            },
+            correct: 'a'
+          }
+        ]
+      }
+    ];
+
+    const quizForm = document.getElementById('quizForm');
+    const quizResult = document.getElementById('quizResult');
+    const infoSection = document.getElementById('infoSection');
+    const submitBtn = document.getElementById('submitQuiz');
+
+    let currentSetIndex = 0;
+    let infoHidden = false;
+
+    function renderQuiz(setIndex) {
+      const set = quizSets[setIndex];
+      quizForm.innerHTML = ''; 
+      quizResult.textContent = '';
+      submitBtn.disabled = false;
+
+      set.questions.forEach(q => {
+        const questionDiv = document.createElement('div');
+        questionDiv.classList.add('quiz-question');
+        questionDiv.id = q.id;
+        questionDiv.textContent = q.question;
+
+        const ul = document.createElement('ul');
+        ul.classList.add('options');
+
+        for (const [key, val] of Object.entries(q.options)) {
+          const li = document.createElement('li');
+          const label = document.createElement('label');
+          const input = document.createElement('input');
+          input.type = 'radio';
+          input.name = q.id;
+          input.value = key;
+          input.required = true;
+
+          label.appendChild(input);
+          label.appendChild(document.createTextNode(' ' + val));
+          li.appendChild(label);
+          ul.appendChild(li);
+        }
+
+        quizForm.appendChild(questionDiv);
+        quizForm.appendChild(ul);
+      });
+    }
+
+
+    quizForm.addEventListener('change', () => {
+      if (!infoHidden) {
+        infoHidden = true;
+        infoSection.style.opacity = '0';
+        setTimeout(() => {
+          infoSection.style.display = 'none';
+        }, 800);
+      }
+    });
+
+    quizForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const set = quizSets[currentSetIndex];
+      let score = 0;
+      const total = set.questions.length;
+
+      for (const q of set.questions) {
+        const userAnswer = quizForm.elements[q.id].value;
+        if (userAnswer === q.correct) {
+          score++;
+        }
+      }
+
+      let message = '';
+      if (score === total) {
+        message = `🎉 Perfect! You scored ${score} out of ${total}. You really know your school well!`;
+      } else if (score >= total * 0.75) {
+        message = `👍 Great job! You scored ${score} out of ${total}. You know your school pretty well!`;
+      } else if (score >= total * 0.5) {
+        message = `🙂 Not bad! You scored ${score} out of ${total}. Keep learning about your school!`;
+      } else {
+        message = `😕 You scored ${score} out of ${total}. Try again to learn more about Makabulos Memorial High School!`;
+      }
+
+      quizResult.textContent = message;
+      quizResult.focus();
+
+      submitBtn.disabled = true;
+
+      setTimeout(() => {
+        currentSetIndex = (currentSetIndex + 1) % quizSets.length;
+        renderQuiz(currentSetIndex);
+        // Show info section again for new quiz
+        infoSection.style.display = 'block';
+        setTimeout(() => {
+          infoSection.style.opacity = '1';
+        }, 50);
+        infoHidden = false;
+      }, 3000);
+    });
+
+    renderQuiz(currentSetIndex);
+  </script>
+</body>
+</html>

@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Homework Passing Schedule</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, #F9E79F, #D4EFDF);
+      color: #006400;
+      padding: 20px;
+      min-height: 100vh;
+      position: relative;
+    }
+    .back-home {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: #228B22;
+      color: #F9E79F;
+      padding: 10px 18px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1rem;
+      text-decoration: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      transition: background 0.3s ease;
+      z-index: 10;
+      user-select: none;
+    }
+    .back-home:hover {
+      background: #145214;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-weight: 700;
+      font-size: 2.5rem;
+      color: #004d00;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.2);
+      animation: fadeInDown 1s ease;
+    }
+    .accordion {
+      max-width: 950px;
+      margin: 0 auto 30px;
+      border-radius: 14px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+      background: #fff;
+      overflow: hidden;
+      transform: scale(0.98);
+      transition: transform 0.3s ease;
+    }
+    .accordion:hover {
+      transform: scale(1);
+    }
+    .section-header {
+      background: linear-gradient(135deg, #006400, #228B22);
+      color: #F9E79F;
+      padding: 18px 24px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 1.3rem;
+      user-select: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #004d00;
+      transition: background 0.4s, padding 0.3s;
+    }
+    .section-header:hover {
+      background: linear-gradient(135deg, #004d00, #145214);
+      padding-left: 30px;
+    }
+    .section-header .arrow {
+      transition: transform 0.4s ease;
+      font-size: 1.5rem;
+    }
+    .section-header.active .arrow {
+      transform: rotate(90deg);
+    }
+    .section-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.6s ease, padding 0.4s;
+      background: #f0f8e8;
+      padding: 0 20px;
+    }
+    .section-content.active {
+      padding: 20px;
+      max-height: 2000px; /* generous space */
+    }
+    table.calendar {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 12px;
+      margin-top: 10px;
+    }
+    table.calendar th,
+    table.calendar td {
+      padding: 12px;
+      vertical-align: top;
+      min-width: 140px;
+      background: #ffffff;
+      border-radius: 12px;
+      color: #2e7d32;
+      font-size: 0.95rem;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+    table.calendar th {
+      background: #d4e6a5;
+      font-weight: 700;
+      text-align: center;
+      color: #004d00;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    table.calendar td:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+    }
+    .subject-block {
+      background: linear-gradient(135deg, #a3c293, #cce5b8);
+      color: #004d00;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      animation: fadeInUp 0.6s ease;
+    }
+    .subject-title {
+      font-weight: 700;
+      margin-bottom: 8px;
+      font-size: 1rem;
+      border-bottom: 1px solid #7aa05b;
+      padding-bottom: 4px;
+    }
+    .checklist {
+      margin-top: 8px;
+      margin-bottom: 12px;
+    }
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .checklist-item input[type="checkbox"] {
+      margin-right: 8px;
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+    .checklist-item input[type="text"] {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.9rem;
+      color: #2e7d32;
+      outline: none;
+    }
+    .checklist-item input[type="text"]:focus {
+      background: #d4efda;
+      border-radius: 4px;
+    }
+    .checklist-controls {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 4px;
+    }
+    .checklist-controls button {
+      background: #228B22;
+      border: none;
+      color: #F9E79F;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      font-size: 0.85rem;
+      user-select: none;
+    }
+    .checklist-controls button:hover {
+      background: #145214;
+    }
+    textarea.notes {
+      width: 100%;
+      min-height: 55px;
+      border-radius: 8px;
+      border: 1px solid #7aa05b;
+      padding: 6px 8px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.85rem;
+      resize: vertical;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    textarea.notes:focus {
+      border-color: #004d00;
+      outline: none;
+      background: #ecf5d9;
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (max-width: 700px) {
+      table.calendar th, table.calendar td {
+        min-width: 90px;
+        font-size: 0.8rem;
+        padding: 8px;
+      }
+    }
+    .floating-shape {
+      position: fixed;
+      border-radius: 50%;
+      opacity: 0.15;
+      z-index: -1;
+      animation: float 15s infinite ease-in-out;
+    }
+    .shape1 { width: 200px; height: 200px; background: #006400; top: 10%; left: 5%; animation-duration: 18s; }
+    .shape2 { width: 150px; height: 150px; background: #ffcc00; top: 70%; left: 80%; animation-duration: 20s; }
+    .shape3 { width: 120px; height: 120px; background: #008000; top: 40%; left: 60%; animation-duration: 22s; }
+    .shape4 { width: 250px; height: 250px; background: #004d00; top: 80%; left: 10%; animation-duration: 25s; }
+    @keyframes float {
+      0% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-40px) rotate(180deg); }
+      100% { transform: translateY(0px) rotate(360deg); }
+    }
+    .quote-box {
+      position: fixed;
+      bottom: 20px;
+      right: 30px;
+      background: rgba(255,255,255,0.9);
+      color: #004d00;
+      padding: 15px 20px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      max-width: 280px;
+      animation: fadeIn 2s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <a href="mainwebpage.html" class="back-home" title="Back to Home">← Back Home</a>
+  <div class="floating-shape shape1"></div>
+  <div class="floating-shape shape2"></div>
+  <div class="floating-shape shape3"></div>
+  <div class="floating-shape shape4"></div>
+  <h1>Homework Passing Schedule</h1>
+  <div id="accordion-container"></div>
+  <div class="quote-box" id="quoteBox">"Loading quote..."</div>
+
+  <script>
+    const days = ["Monday", "Tuesday", "Wednesday", "Thursday"];
+
+    // Data structure: for each section, list homeworks (subject + day)
+    // We'll not predefine checklist items here; users will add them
+   const sections = [
+  {
+    name: "Grades 7-10",
+    homeworks: [
+      { subject: "English", day: "Monday" },
+      { subject: "Filipino", day: "Monday" },
+      { subject: "Araling Panlipunan", day: "Tuesday" },
+      { subject: "TLE/ICT", day: "Tuesday" },
+      { subject: "Math", day: "Wednesday" },
+      { subject: "Science", day: "Wednesday" },
+      { subject: "MAPEH", day: "Thursday" },
+      { subject: "ESP", day: "Thursday" },
+      { subject: "Computer Literacy", day: "Thursday" }
+    ]
+  },
+  {
+    name: "11 - Laurel",
+    homeworks: [
+      { subject: "Oral Communication", day: "Monday" },
+      { subject: "Komunikasyon at Pananaliksik", day: "Monday" },
+      { subject: "Contemporary Arts", day: "Tuesday" },
+      { subject: "Earth and Life", day: "Tuesday" },
+      { subject: "General Mathematics", day: "Wednesday" },
+      { subject: "English for Academic Purposes", day: "Wednesday" },
+      { subject: "UCSP", day: "Thursday" },
+      { subject: "Empowerment Technologies", day: "Thursday" },
+      { subject: "P.E and Health", day: "Thursday" }
+    ]
+  },
+  {
+    name: "11 - San Juan",
+    homeworks: [
+      { subject: "Oral Communication", day: "Monday" },
+      { subject: "Komunikasyon at Pananaliksik", day: "Monday" },
+      { subject: "Earth Science", day: "Tuesday" },
+      { subject: "Precalculus", day: "Wednesday" },
+      { subject: "General Chemistry", day: "Wednesday" },
+      { subject: "General Mathematics", day: "Wednesday" },
+      { subject: "P.E and Health", day: "Thursday" },
+      { subject: "Empowerment Technologies", day: "Thursday" },
+      { subject: "Philosophy", day: "Thursday" }
+    ]
+  },
+  {
+    name: "12 - HUMSS",
+    homeworks: [
+      { subject: "Malikhain", day: "Monday" },
+      { subject: "Dias", day: "Monday" },
+      { subject: "PR 2", day: "Tuesday" },
+      { subject: "Pagbasa", day: "Tuesday" },
+      { subject: "Intro to Philosophy", day: "Wednesday" },
+      { subject: "Philippine Politics", day: "Wednesday" },
+      { subject: "Pagbasa", day: "Thursday" },
+      { subject: "Media and Information Literacy (MIL)", day: "Thursday" }
+    ]
+  },
+  {
+    name: "12 - STEM",
+    homeworks: [
+      { subject: "Oral Communication", day: "Monday" },
+      { subject: "Komunikasyon at Pananaliksik", day: "Monday" },
+      { subject: "Earth Science", day: "Tuesday" },
+      { subject: "PreCalculus", day: "Wednesday" },
+      { subject: "General Chemistry", day: "Wednesday" },
+      { subject: "General Mathematics", day: "Wednesday" },
+      { subject: "P.E and Health", day: "Thursday" },
+      { subject: "Empowerment Technology", day: "Thursday" },
+      { subject: "Philosophy", day: "Thursday" }
+    ]
+  }
+];
+
+
+    const quotes = [
+      "Education is the key to success. 📘",
+      "Small progress each day adds up to big results. 🌱",
+      "Your future depends on what you do today. ⏳",
+      "Mistakes are proof that you are trying. ✨",
+      "Strive for progress, not perfection. 💡",
+      "Dream big, work hard, stay focused. 🚀"
+    ];
+
+    function showRandomQuote() {
+      const box = document.getElementById('quoteBox');
+      const i = Math.floor(Math.random() * quotes.length);
+      box.textContent = quotes[i];
+    }
+    showRandomQuote();
+    setInterval(showRandomQuote, 15000);
+
+    const container = document.getElementById('accordion-container');
+
+    // Key generation for localStorage
+    function keyNote(sectionName, subject, day) {
+      return `note__${sectionName}__${subject}__${day}`;
+    }
+    function keyChecklist(sectionName, subject, day) {
+      return `checklist__${sectionName}__${subject}__${day}`;
+    }
+
+    // Load notes
+    function loadNote(sectionName, subject, day) {
+      return localStorage.getItem(keyNote(sectionName, subject, day)) || '';
+    }
+    // Save notes
+    function saveNote(sectionName, subject, day, text) {
+      localStorage.setItem(keyNote(sectionName, subject, day), text);
+    }
+
+    // Load checklist: returns an array of { text: string, checked: boolean }
+    function loadChecklist(sectionName, subject, day) {
+      const raw = localStorage.getItem(keyChecklist(sectionName, subject, day));
+      if (!raw) return [];
+      try {
+        return JSON.parse(raw);
+      } catch(e) {
+        return [];
+      }
+    }
+    // Save checklist
+    function saveChecklist(sectionName, subject, day, arr) {
+      localStorage.setItem(keyChecklist(sectionName, subject, day), JSON.stringify(arr));
+    }
+
+    // Create a subject-block (with title, checklist, notes) for a given section/subject/day
+    function createSubjectBlock(sectionName, subject, day) {
+      const block = document.createElement('div');
+      block.classList.add('subject-block');
+
+      const title = document.createElement('div');
+      title.classList.add('subject-title');
+      title.textContent = subject;
+      block.appendChild(title);
+
+      // Create checklist container
+      const checklistDiv = document.createElement('div');
+      checklistDiv.classList.add('checklist');
+
+      // Get saved checklist
+      let checklist = loadChecklist(sectionName, subject, day);
+
+      function renderChecklist() {
+        checklistDiv.innerHTML = ''; // clear
+
+        checklist.forEach((item, idx) => {
+          const itemDiv = document.createElement('div');
+          itemDiv.classList.add('checklist-item');
+
+          const chk = document.createElement('input');
+          chk.type = 'checkbox';
+          chk.checked = item.checked;
+          chk.addEventListener('change', () => {
+            checklist[idx].checked = chk.checked;
+            saveChecklist(sectionName, subject, day, checklist);
+          });
+
+          const txt = document.createElement('input');
+          txt.type = 'text';
+          txt.value = item.text;
+          txt.placeholder = 'Task detail...';
+          txt.addEventListener('input', () => {
+            checklist[idx].text = txt.value;
+            saveChecklist(sectionName, subject, day, checklist);
+          });
+
+          const delBtn = document.createElement('button');
+          delBtn.textContent = '×';
+          delBtn.title = 'Remove task';
+          delBtn.style.marginLeft = '8px';
+          delBtn.style.background = '#a30000';
+          delBtn.style.border = 'none';
+          delBtn.style.color = '#fff';
+          delBtn.style.borderRadius = '50%';
+          delBtn.style.width = '20px';
+          delBtn.style.height = '20px';
+          delBtn.style.cursor = 'pointer';
+          delBtn.style.fontWeight = '700';
+          delBtn.style.lineHeight = '18px';
+          delBtn.style.padding = '0';
+          delBtn.addEventListener('click', () => {
+            checklist.splice(idx, 1);
+            saveChecklist(sectionName, subject, day, checklist);
+            renderChecklist();
+          });
+
+          itemDiv.appendChild(chk);
+          itemDiv.appendChild(txt);
+          itemDiv.appendChild(delBtn);
+
+          checklistDiv.appendChild(itemDiv);
+        });
+
+        // Controls to add new
+        const ctrlDiv = document.createElement('div');
+        ctrlDiv.classList.add('checklist-controls');
+        const addBtn = document.createElement('button');
+        addBtn.textContent = '+ Add Task';
+        addBtn.type = 'button';
+        addBtn.addEventListener('click', () => {
+          checklist.push({ text: '', checked: false });
+          saveChecklist(sectionName, subject, day, checklist);
+          renderChecklist();
+        });
+        ctrlDiv.appendChild(addBtn);
+        checklistDiv.appendChild(ctrlDiv);
+      }
+
+      // Initial render
+      renderChecklist();
+
+      block.appendChild(checklistDiv);
+
+      // Notes textarea
+      const ta = document.createElement('textarea');
+      ta.classList.add('notes');
+      ta.placeholder = 'Add notes for this subject...';
+      ta.value = loadNote(sectionName, subject, day);
+      ta.addEventListener('input', () => {
+        saveNote(sectionName, subject, day, ta.value);
+      });
+      block.appendChild(ta);
+
+      return block;
+    }
+
+    // Build the accordion and table
+    sections.forEach(section => {
+      const secDiv = document.createElement('div');
+      secDiv.classList.add('accordion');
+
+      const header = document.createElement('div');
+      header.classList.add('section-header');
+      header.innerHTML = `<span>${section.name}</span><span class="arrow">&#9654;</span>`;
+      secDiv.appendChild(header);
+
+      const content = document.createElement('div');
+      content.classList.add('section-content');
+
+      const table = document.createElement('table');
+      table.classList.add('calendar');
+
+      const thead = document.createElement('thead');
+      const trHead = document.createElement('tr');
+      days.forEach(day => {
+        const th = document.createElement('th');
+        th.textContent = day;
+        trHead.appendChild(th);
+      });
+      thead.appendChild(trHead);
+      table.appendChild(thead);
+
+      const tbody = document.createElement('tbody');
+      const trBody = document.createElement('tr');
+
+      days.forEach(day => {
+        const td = document.createElement('td');
+
+        const hwList = section.homeworks.filter(hw => hw.day === day);
+        if (hwList.length === 0) {
+          td.textContent = '-';
+          td.style.color = '#999';
+        } else {
+          hwList.forEach(hw => {
+            const sb = createSubjectBlock(section.name, hw.subject, hw.day);
+            td.appendChild(sb);
+          });
+        }
+
+        trBody.appendChild(td);
+      });
+
+      tbody.appendChild(trBody);
+      table.appendChild(tbody);
+      content.appendChild(table);
+      secDiv.appendChild(content);
+      container.appendChild(secDiv);
+
+      header.addEventListener('click', () => {
+        const active = content.classList.contains('active');
+        if (active) {
+          content.classList.remove('active');
+          header.classList.remove('active');
+        } else {
+          content.classList.add('active');
+          header.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

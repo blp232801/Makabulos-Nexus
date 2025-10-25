@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Makabulos Memorial High School - Teacher Profiles</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, #F9E79F 0%, #D4EFDF 100%);
+      color: #004d00;
+      min-height: 100vh;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      font-weight: 700;
+      font-size: 2.8rem;
+      margin-bottom: 10px;
+      text-align: center;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+      color: #006400;
+    }
+
+    h2 {
+      font-weight: 700;
+      font-size: 1.8rem;
+      margin: 10px 0 30px;
+      text-align: center;
+      color: #004d00;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+
+    /* Search bar styles */
+    .search-container {
+      width: 100%;
+      max-width: 600px;
+      margin-bottom: 30px;
+      position: relative;
+    }
+
+    .search-container input[type="text"] {
+      width: 100%;
+      padding: 12px 40px 12px 15px;
+      font-size: 1rem;
+      border-radius: 25px;
+      border: 2px solid #2e7d32;
+      outline: none;
+      transition: border-color 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0, 100, 0, 0.1);
+    }
+
+    .search-container input[type="text"]:focus {
+      border-color: #145214;
+      box-shadow: 0 4px 15px rgba(0, 100, 0, 0.3);
+    }
+
+    .search-container svg {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      fill: #2e7d32;
+      width: 20px;
+      height: 20px;
+      pointer-events: none;
+    }
+
+    .teachers-container {
+      display: grid;
+      grid-template-rows: repeat(auto-fit, minmax(300px, 2fr));
+      gap: 30px;
+      max-width: 1100px;
+      width: 100%;
+    }
+
+    .teacher-card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 100, 0, 0.15);
+      padding: 30px 25px 35px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      max-height: 180px; 
+    }
+
+    .teacher-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 35px rgba(0, 100, 0, 0.3);
+    }
+
+    .teacher-card.expanded {
+      max-height: 1200px; 
+      padding-bottom: 40px;
+    }
+
+    .teacher-photo {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid #006400;
+      box-shadow: 0 4px 10px rgba(0, 100, 0, 0.2);
+      margin-bottom: 20px;
+      background: #e0f2f1;
+      flex-shrink: 0;
+    }
+
+    .teacher-name {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #004d00;
+      text-align: center;
+      user-select: none;
+    }
+
+    .subjects {
+      font-weight: 600;
+      color: #2e7d32;
+      margin-bottom: 15px;
+      text-align: center;
+      user-select: none;
+    }
+
+    .details {
+      width: 100%;
+      opacity: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: opacity 0.4s ease, max-height 0.5s ease;
+    }
+
+    .teacher-card.expanded .details {
+      opacity: 1;
+      max-height: 1200px; 
+      margin-top: 10px;
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+
+    .schedule-table {
+      width: 100%;
+      max-width: 900px; 
+      margin: 0 auto 15px;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      table-layout: horizontal;
+    }
+
+    .schedule-table th,
+    .schedule-table td {
+      border: 1px solid #a5d6a7;
+      padding: 8px 10px;
+      text-align: center;
+      color: #004d00;
+      vertical-align: middle;
+      word-wrap: break-word;
+    }
+
+    .schedule-table th {
+      background-color: #c8e6c9;
+      font-weight: 700;
+    }
+
+    /* First column (time) wider */
+    .schedule-table th:first-child,
+    .schedule-table td:first-child {
+      width: 20%;
+      white-space: nowrap;
+    }
+
+    /* Other columns equal width */
+    .schedule-table th:not(:first-child),
+    .schedule-table td:not(:first-child) {
+      width: 16%;
+    }
+
+    /* Style recess rows */
+    .schedule-table tbody tr.recess-row {
+      background-color: #e6f2e6;
+      font-style: italic;
+      color: #2e7d32;
+    }
+
+    .room-info {
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #006400;
+      text-align: center;
+    }
+
+    .fun-facts {
+      font-style: italic;
+      font-size: 0.9rem;
+      color: #2e7d32;
+      text-align: center;
+      border-top: 1px solid #a5d6a7;
+      padding-top: 12px;
+      max-width: 260px;
+      margin: 0 auto;
+    }
+
+    .back-home {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: #228B22;
+      color: #F9E79F;
+      padding: 10px 18px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1rem;
+      text-decoration: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      transition: background 0.3s ease;
+      z-index: 10;
+      user-select: none;
+    }
+    .back-home:hover {
+      background: #145214;
+    }
+
+    /* Floating decorative leaves */
+    .floating-leaf {
+      position: fixed;
+      width: 120px;
+      height: 120px;
+      opacity: 0.15;
+      pointer-events: none;
+      z-index: 0;
+      background-image: url('https://svgshare.com/i/7vS.svg'); /* simple leaf SVG */
+      background-repeat: no-repeat;
+      background-size: contain;
+      filter: drop-shadow(0 0 2px #2e7d32);
+      transform-origin: center;
+      animation: floatLeaf 6s ease-in-out infinite;
+    }
+
+    .floating-leaf.top-right {
+      top: 20px;
+      right: 20px;
+      animation-delay: 0s;
+    }
+
+    .floating-leaf.bottom-left {
+      bottom: 20px;
+      left: 20px;
+      animation-delay: 3s;
+    }
+
+    @keyframes floatLeaf {
+      0%, 100% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0.15;
+      }
+      50% {
+        transform: translateY(-15px) rotate(15deg);
+        opacity: 0.25;
+      }
+    }
+
+    @media (max-width: 1000px) {
+      .teacher-card {
+        padding: 30px 25px 35px;
+        max-height: 160px;
+      }
+      .teacher-card.expanded {
+        max-height: 600px;
+      }
+      .teacher-photo {
+        width: 120px;
+        height: 120px;
+        margin-bottom: 15px;
+      }
+      .fun-facts {
+        max-width: 100%;
+      }
+      .schedule-table {
+        font-size: 0.75rem;
+        max-width: 100%;
+      }
+      .schedule-table th:first-child,
+      .schedule-table td:first-child {
+        width: 25%;
+      }
+      .schedule-table th:not(:first-child),
+      .schedule-table td:not(:first-child) {
+        width: 15%;
+      }
+      .floating-leaf {
+        width: 80px;
+        height: 80px;
+      }
+    }
+  </style>
+</head>
+
+<body>  
+  <h1>Makabulos Memorial High School</h1>
+  <h2>Teacher Profiles & Schedules</h2>
+
+  
+  <div class="search-container" role="search" aria-label="Search teachers">
+    <input type="text" id="teacherSearch" placeholder="Search teachers by name or subject..." aria-describedby="searchHelp" />
+    <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M21.71 20.29l-3.388-3.388A7.92 7.92 0 0016 10a8 8 0 10-8 8 7.92 7.92 0 006.902-3.678l3.388 3.388a1 1 0 001.414-1.414zM4 10a6 6 0 1112 0 6 6 0 01-12 0z"/></svg>
+    <span id="searchHelp" class="sr-only">Type to filter the list of teachers by their name or subjects taught.</span>
+  </div>
+
+  <div class="teachers-container" aria-label="Teacher profiles and schedules">
+
+    <article class="teacher-card" tabindex="0" aria-expanded="false" aria-labelledby="teacher1-name" aria-describedby="teacher1-desc" data-name="Ms. Shiela Alfonso" data-subjects="Gen Physics Pre-Calculus Math Earth Science Gen Chem Health">
+      <img src="shiela.jpg" alt="Photo of Ms. Shiela Alfonso" class="teacher-photo" />
+      <h3 id="teacher1-name" class="teacher-name">Ms. Shiela Alfonso</h3>
+      <p class="subjects"><strong>Subjects:</strong> Gen Physics, Pre-Calculus, Math, Earth Science, Gen Chem, Health</p>
+
+      <div class="details" id="teacher1-desc">
+        <table class="schedule-table" aria-label="Weekly schedule for Ms. Shiela Alfonso">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>M</th>
+              <th>T</th>
+              <th>W</th>
+              <th>Th</th>
+              <th>F</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>7:40 - 8:30</td><td></td><td>Gen Physics (STEM)</td><td>Gen Physics (STEM)</td><td>Gen Physics (STEM)</td><td>Gen Physics (STEM)</td></tr>
+            <tr><td>8:30 - 9:20</td><td>Pre-Calculus (San Juan)</td><td>Pre-Calculus (San Juan)</td><td>Math (Lakan)</td><td>Pre-Calculus (San Juan)</td><td>Pre-Calculus (San Juan)</td></tr>
+            <tr><td>9:20 - 10:10</td><td></td><td></td><td></td><td></td><td></td></tr>
+           <tr class="recess-row"><td>10:10-10:30</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>10:30 - 11:20</td><td>Math (Lakan)</td><td>Math (Lakan)</td><td></td><td>Math (Lakan)</td><td>Math (Lakan)</td></tr>
+            <tr><td>11:20 - 12:10</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>1:10 - 2:00</td><td>Earth Science (San Juan)</td><td></td><td>Earth Science (San Juan)</td><td>Earth Science (San Juan)</td><td>Earth Science (San Juan)</td></tr>
+            <tr><td>2:00 - 2:50</td><td>Gen Chem (San Juan)</td><td>Gen Chem (San Juan)</td><td></td><td>Gen Chem (San Juan)</td><td>Gen Chem (San Juan)</td></tr>
+             <tr class="recess-row"><td>2:50 - 3:10</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>3:10 - 4:00</td><td>Homeroom Guidance (Lakan)</td><td></td><td></td><td></td><td>Health (Magsaysay)</td></tr>
+          </tbody>
+        </table>
+
+        <p class="room-info"><strong>Office:</strong> Chemistry Laboratory</p>
+
+        <p class="fun-facts">""</p>
+      </div>
+    </article>
+
+    <article class="teacher-card" tabindex="0" aria-expanded="false" aria-labelledby="teacher2-name" aria-describedby="teacher2-desc" data-name="Mr. Jonathan Duldulao" data-subjects="Komunikasyon Pagbasa at Pagsusuri Filipino">
+      <img src="jonathan.jfif" alt="Photo of Mr. Jonathan Duldulao" class="teacher-photo" />
+      <h3 id="teacher2-name" class="teacher-name">Mr. Jonathan Duldulao</h3>
+      <p class="subjects"><strong>Subjects:</strong> Komunikasyon, Pagbasa at Pagsusuri, Filipino</p>
+
+      <div class="details" id="teacher2-desc">
+        <table class="schedule-table" aria-label="Weekly schedule for Mr. Jonathan Duldulao">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>M</th>
+              <th>T</th>
+              <th>W</th>
+              <th>Th</th>
+              <th>F</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>7:40 - 8:30</td><td>Komunikasyon (Laurel)</td><td></td><td>Komunikasyon (Laurel)</td><td>Komunikasyon (Laurel)</td><td>Komunikasyon (Laurel)</td></tr>
+            <tr><td>8:30 - 9:20</td><td></td><td>Pagbasa at Pagsusuri (HUMSS)</td><td>Pagbasa at Pagsusuri (HUMSS)</td><td>Pagbasa at Pagsusuri (HUMSS)</td><td>Pagbasa at Pagsusuri (HUMSS)</td></tr>
+            <tr><td>9:20 - 10:10</td><td>Filipino (Aguinaldo)</td><td>Filipino (Aguinaldo)</td><td>Filipino (Aguinaldo)</td><td></td><td>Filipino (Aguinaldo)</td></tr>
+           <tr class="recess-row"><td>10:10-10:30</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>10:30 - 11:20</td><td>Filipino (Magsaysay)</td><td>Filipino (Magsaysay)</td><td></td><td>Filipino (Magsaysay)</td><td>Filipino (Magsaysay)</td></tr>
+            <tr><td>11:20 - 12:10</td><td></td><td>Filipino (Rizal)</td><td>Filipino (Rizal)</td><td>Filipino (Rizal)</td><td>Filipino (Rizal)</td></tr>
+            <tr><td>1:10 - 2:00</td><td>Filipino (Gomez)</td><td>Filipino(Gomez)</td><td>Filipino (Gomez)</td><td>Filipino (Gomez)</td><td>Filipino (Gomez)</td><td></td></tr>
+            <tr><td>2:00 - 2:50</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr class="recess-row"><td>2:50 - 3:10</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>3:10 - 4:00</td><td>Homeroom Guidance (Magsaysay)</td><td></td><td></td><td></td><td></td></tr>
+          </tbody>
+        </table>
+
+        <p class="room-info"><strong>Office:</strong> Biology Laboratory</p>
+
+        <p class="fun-facts">""</p>
+      </div>
+    </article>
+
+    <article class="teacher-card" tabindex="0" aria-expanded="false" aria-labelledby="teacher3-name" aria-describedby="teacher3-desc" data-name="Ms. Crislyn Bautista" data-subjects="English English for Acads TLE Media and Information Komunikasyon">
+      <img src="crislyn.jpg" alt="Photo of Ms. Crislyn Bautista" class="teacher-photo" />
+      <h3 id="teacher3-name" class="teacher-name">Ms. Crislyn Bautista</h3>
+      <p class="subjects"><strong>Subjects:</strong> English, English for Acads, TLE, Media and Information, Komunikasyon</p>
+
+      <div class="details" id="teacher3-desc">
+        <table class="schedule-table" aria-label="Weekly schedule for Ms. Crislyn Bautista">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>M</th>
+              <th>T</th>
+              <th>W</th>
+              <th>Th</th>
+              <th>F</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>7:40 - 8:30</td><td>English (Lakan)</td><td>English (Lakan)</td><td>English (Lakan)</td><td>English (Lakan)</td><td>English (Lakan)</td></tr>
+            <tr><td>8:30 - 9:20</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>9:20 - 10:10</td><td>TLE (Magsaysay)</td><td>TLE (Magsaysay)</td><td>Komunikasyon (San Juan)</td><td>TLE (Magsaysay)</td><td>TLE (Magsaysay)</td></tr>
+           <tr class="recess-row"><td>10:10-10:30</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>10:30 - 11:20</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>11:20 - 12:10</td><td>English for Acad (Laurel)</td><td>English for Acad (Laurel)</td><td>English for Acad (Laurel)</td><td>English for Acad (Laurel)</td><td>Komunikasyon (San Juan)</td></tr>
+            <tr><td>1:10 - 2:00</td><td></td><td>English for Acad (STEM)</td><td>English for Acad (STEM)</td><td>English for Acad (STEM)</td><td>English for Acad (STEM)</td></tr>
+            <tr><td>2:00 - 2:50</td><td>Media and Info (HUMSS)</td><td>Media and Info (HUMSS)</td><td>Media and Info (HUMSS)</td><td>Media and Info (HUMSS)</td><td></td></tr>
+            <tr class="recess-row"><td>2:50 - 3:10</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>3:10 - 4:00</td><td>Komunikasyon (San Juan)</td><td></td><td></td><td>Komunikasyon (San Juan)</td><td>Homeroom Guidance (Burgos)</td></tr>
+          </tbody>
+        </table>
+
+        <p class="room-info"><strong>Office:</strong> Faculty</p>
+
+        <p class="fun-facts">""</p>
+      </div>
+    </article>
+
+    <article class="teacher-card" tabindex="0" aria-expanded="false" aria-labelledby="teacher4-name" aria-describedby="teacher4-desc" data-name="Ms. Jewel Balanay" data-subjects="English Intro to Philosophy Filipino Filipino sa Piling Larangan">
+      <img src="jewel.jpg" alt="Photo of Ms. Jewel Balanay" class="teacher-photo" />
+      <h3 id="teacher4-name" class="teacher-name">Ms. Jewel Balanay</h3>
+      <p class="subjects"><strong>Subjects:</strong> English, Intro to Philosophy, Filipino, Filipino sa Piling Larangan</p>
+
+      <div class="details" id="teacher4-desc">
+        <table class="schedule-table" aria-label="Weekly schedule for Ms. Jewel Balanay">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>M</th>
+              <th>T</th>
+              <th>W</th>
+              <th>Th</th>
+              <th>F</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>7:40 - 8:30</td><td>English (Magsaysay)</td><td>English (Magsaysay)</td><td>English (Magsaysay)</td><td>English (Magsaysay)</td><td>English (Magsaysay)</td></tr>
+            <tr><td>8:30 - 9:20</td><td>Filipino sa Piling Larangan (STEM)</td><td>Filipino sa Piling Larangan (STEM)</td><td>Filipino sa Piling Larangan (STEM)</td><td></td><td>Filipino sa Piling Larangan (STEM)</td></tr>
+            <tr><td>9:20 - 10:10</td><td>Intro to Philo (San Juan)</td><td>Intro to Philo (San Juan)</td><td></td><td>Intro to Philo (San Juan)</td><td>Intro to Philo (San Juan)</td></tr>
+            <tr class="recess-row"><td>10:10-10:30</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>10:30 - 11:20</td><td>English (Gomez)</td><td>English (Gomez)</td><td>English (Gomez)</td><td>English (Gomez)</td><td>English (Gomez)</td></tr>
+            <tr><td>11:20 - 12:10</td><td>English for Acad (Laurel)</td><td>English for Acad (Laurel)</td><td>English for Acad (Laurel)</td><td>English for Acad (Laurel)</td><td>Komunikasyon (San Juan)</td></tr>
+            <tr><td>1:10 - 2:00</td><td>Filipino (Lakan)</td><td>Filipino (Lakan)</td><td>Filipino (Lakan)</td><td>Filipino (Lakan)</td><td></td></tr>
+            <tr><td>2:00 - 2:50</td><td>Health (Lakan)</td><td></td><td></td><td>Homeroom Guidance (Datu)</td><td></td></tr>
+             <tr class="recess-row"><td>2:50 - 3:10</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>3:10 - 4:00</td><td>Filipino (Datu)</td><td>Filipino (Datu)</td><td>Filipino (Datu)</td><td>Filipino (Datu)</td><td></td></tr>
+          </tbody>
+        </table>
+
+        <p class="room-info"><strong>Office:</strong> Faculty</p>
+
+        <p class="fun-facts">""</p>
+      </div>
+    </article>
+
+    <article class="teacher-card" tabindex="0" aria-expanded="false" aria-labelledby="teacher5-name" aria-describedby="teacher5-desc" data-name="Ms. Kim Mamuad" data-subjects="TLE Music Arts">
+      <img src="kim.jpg" alt="Photo of Ms. Kim Mamuad" class="teacher-photo" />
+      <h3 id="teacher5-name" class="teacher-name">Ms. Kim Mamuad</h3>
+      <p class="subjects"><strong>Subjects:</strong> TLE, Music, Arts</p>
+
+      <div class="details" id="teacher5-desc">
+        <table class="schedule-table" aria-label="Weekly schedule for Ms. Kim Mamuad">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>M</th>
+              <th>T</th>
+              <th>W</th>
+              <th>Th</th>
+              <th>F</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>7:40 - 8:30</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>8:30 - 9:20</td><td>TLE (Lakan/Datu)</td><td>TLE (Lakan/Datu)</td><td></td><td></td><td>TLE (Lakan/Datu)</td></tr>
+            <tr><td>9:20 - 10:10</td><td>TLE (Burgos)</td><td>TLE (Burgos)</td><td></td><td>TLE (Burgos)</td><td>TLE (Burgos)</td></tr>
+            <tr class="recess-row"><td>10:10-10:30</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>10:30 - 11:20</td><td></td><td></td><td></td><td>Homeroom Guidance ()</td><td></td></tr>
+            <tr><td>11:20 - 12:10</td><td>TLE (Gomez)</td><td>TLE (Gomez)</td><td>TLE (Gomez)</td><td>TLE (Gomez)</td><td>TLE (Lakan/Datu)</td></tr>
+            <tr><td>1:10 - 2:00</td><td>TLE (Aguinaldo)</td><td>TLE (Aguinaldo)</td><td>TLE (Aguinaldo)</td><td>TLE (Aguinaldo)</td><td></td></tr>
+            <tr><td>2:00 - 2:50</td><td>TLE (Rizal)</td><td>TLE (Rizal)</td><td>TLE (Rizal)</td><td>TLE (Rizal)</td><td></td></tr>
+             <tr class="recess-row"><td>2:50 - 3:10</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>3:10 - 4:00</td><td>Music/Arts (Burgos)</td><td>Music/Arts (Burgos)</td><td></td><td></td><td></td></tr>
+          </tbody>
+        </table>
+
+        <p class="room-info"><strong>Office:</strong> Faculty</p>
+
+        <p class="fun-facts">""</p>
+      </div>
+    </article>
+
+ <article class="teacher-card" tabindex="0" aria-expanded="false" aria-labelledby="teacher6-name" aria-describedby="teacher6-desc" data-name="Mr. Micheal Angelo Pascual" data-subjects="AP">
+      <img src="ma.jfif" alt="Photo of Mr. Micheal Angelo Pascual" class="teacher-photo" />
+      <h3 id="teacher6-name" class="teacher-name">Mr. Micheal Angelo Pascual</h3>
+      <p class="subjects"><strong>Subject:</strong> AP</p>
+
+      <div class="details" id="teacher6-desc">
+        <table class="schedule-table" aria-label="Weekly schedule for Mr. Micheal Angelo Pascual">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>M</th>
+              <th>T</th>
+              <th>W</th>
+              <th>Th</th>
+              <th>F</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>7:40 - 8:30</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>8:30 - 9:20</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>9:20 - 10:10</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr class="recess-row"><td>10:10-10:30</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>10:30 - 11:20</td><td></td><td>AP (rizal)</td><td>AP (Rizal)</td><td>AP (Rizal)</td><td>AP (Rizal)</td></tr>
+            <tr><td>11:20 - 12:10</td><td></td><td>AP (Agui)</td><td>AP (Agui)</td><td>AP (Agui)</td><td>AP (Agui)</td></tr>
+            <tr><td>1:10 - 2:00</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>2:00 - 2:50</td><td>AP (Gomez)</td><td>AP (Gomez)</td><td></td><td>AP (Gomez)</td><td>AP (Gomez)</td></tr>
+            <tr class="recess-row"><td>2:50 - 3:10</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>3:10 - 4:00</td><td></td><td></td><td></td><td></td><td></td></tr>
+          </tbody>
+        </table>
+
+        <p class="room-info"><strong>Office:</strong> Guidance</p>
+
+        <p class="fun-facts">""</p>
+      </div>
+    </article>
+
+ <article class="teacher-card" tabindex="0" aria-expanded="false" aria-labelledby="teacher7-name" aria-describedby="teacher7-desc" data-name="Mrs. Anabel Marcos" data-subjects="English Filipino Science ESP">
+      <img src="anabel.jfif" alt="Photo of Mrs. Anabel Marcos" class="teacher-photo" />
+      <h3 id="teacher7-name" class="teacher-name">Mrs. Anabel Marcos</h3>
+      <p class="subjects"><strong>Subjects:</strong> Science, English, ESP</p>
+
+      <div class="details" id="teacher7-desc">
+        <table class="schedule-table" aria-label="Weekly schedule for Mrs. Anabel Marcos">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>M</th>
+              <th>T</th>
+              <th>W</th>
+              <th>Th</th>
+              <th>F</th>
+            </tr>
+          </thead>
+          <tbody>
+           <tr><td>7:40 - 8:30</td><td>Science (Gomez)</td><td>Science (Gomez)</td><td>Science (Gomez)</td><td>Science (Gomez)</td><td>Science (Gomez)</td></tr>
+            <tr><td>8:30 - 9:20</td><td>Science (Gomez)</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>9:20 - 10:10</td><td></td><td>English (Rizal)</td><td>English (Rizal)</td><td>Science (Agui)</td><td>English (Rizal)</td></tr>
+            <tr class="recess-row"><td>10:10-10:30</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>10:30 - 11:20</td><td>Science (Agui)</td><td>Science (Agui)</td><td>Science (Agui)</td><td>Science (Agui)</td><td>Science (Agui)</td></tr>
+            <tr><td>11:20 - 12:10</td><td></td><td>Filipino (Burgos)</td><td>Filipino (Burgos)</td><td>Filipino (Burgos)</td><td></td></tr>
+            <tr><td>1:10 - 2:00</td><td>English (Rizal)</td><td></td><td></td><td>English (Rizal)</td><td>English (Rizal)</td></tr>
+            <tr><td>2:00 - 2:50</td><td></td><td></td><td></td><td>ESP (Lakan)</td><td>ESP (Lakan)</td></tr>
+            <tr class="recess-row"><td>2:50 - 3:10</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>3:10 - 4:00</td><td></td><td>ESP (Lakan)</td><td>ESP (Lakan)</td><td></td><td></td></tr>
+          </tbody>
+        </table>
+
+        <p class="room-info"><strong>Office:</strong> Faculty</p>
+
+        <p class="fun-facts">"She's a legendary teacher!"</p>
+      </div>
+    </article>
+
+ <article class="teacher-card" tabindex="0" aria-expanded="false" aria-labelledby="teacher8-name" aria-describedby="teacher8-desc" data-name="Ms. Mai-Mai L. Dela Cruz" data-subjects="Math GenMath P.E and Health">
+      <img src="mai.jpg" alt="Photo of Ms. Mai-Mai L. Dela Cruz" class="teacher-photo" />
+      <h3 id="teacher8-name" class="teacher-name">Ms. Mai-Mai L. Dela Cruz</h3>
+      <p class="subjects"><strong>Subjects:</strong> Math, GenMath, PE and Health</p>
+
+      <div class="details" id="teacher8-desc">
+        <table class="schedule-table" aria-label="Weekly schedule for Ms. Mai-Mai L. Dela Cruz">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>M</th>
+              <th>T</th>
+              <th>W</th>
+              <th>Th</th>
+              <th>F</th>
+            </tr>
+          </thead>
+          <tbody>
+           <tr><td>7:40 - 8:30</td><td>Math (Agui)</td><td>Math (Agui)</td><td>Math (Agui)</td><td>Math (Agui)</td><td>Math </td></tr>
+            <tr><td>8:30 - 9:20</td><td></td><td>Math (Rizal)</td><td>Math (Rizal)</td><td>Math (Rizal)</td><td>Math (Rizal)</td></tr>
+            <tr><td>9:20 - 10:10</td><td>Math (Rizal)</td><td>Gen Math (Laurel)</td><td>Gen Math (Laurel)</td><td>Gen Math (Laurel)</td><td>Gen Math (Laurel)</td></tr>
+            <tr class="recess-row"><td>10:10-10:30</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>10:30 - 11:20</td><td>Gen Math (San Juan)</td><td>Gen Math (San Juan)</td><td>Gen Math (San Juan)</td><td></td><td>Gen Math (San Juan)</td></tr>
+            <tr><td>11:20 - 12:10</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>1:10 - 2:00</td><td></td><td>P.E (Burgos)</td><td></td><td></td><td></td></tr>
+            <tr><td>2:00 - 2:50</td><td></td><td></td><td>Homeroom Guidance (San Juan)</td><td>P.E (HUMSS)</td><td>P.E and Health (Agui)</td></tr>
+            <tr class="recess-row"><td>2:50 - 3:10</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>3:10 - 4:00</td><td></td><td></td><td></td><td></td><td></td></tr>
+          </tbody>
+        </table>
+
+        <p class="room-info"><strong>Office:</strong> Library</p>
+
+        <p class="fun-facts">"She's a Math Wizard!"</p>
+      </div>
+    </article>
+
+ <article class="teacher-card" tabindex="0" aria-expanded="false" aria-labelledby="teacher9-name" aria-describedby="teacher9-desc" data-name="Ms. Hershie Pangilinan" data-subjects="ValuesEd AP CPAR Arts Music and ContempArt">
+      <img src="hershie.jfif" alt="Photo of Ms. Hershie Pangilinan" class="teacher-photo" />
+      <h3 id="teacher9-name" class="teacher-name">Ms. Hershie Pangilinan</h3>
+      <p class="subjects"><strong>Subjects:</strong> Values Education, AP, CPAR, Arts, Music, and Contemporary Art</p>
+
+      <div class="details" id="teacher9-desc">
+        <table class="schedule-table" aria-label="Weekly schedule for Ms. Hershie Pangilinan">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>M</th>
+              <th>T</th>
+              <th>W</th>
+              <th>Th</th>
+              <th>F</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr><td>7:40 - 8:30</td><td>Values Ed (Rizal)</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>8:30 - 9:20</td><td></td><td></td><td></td><td>Music (Lakan)</td><td></td></tr>
+            <tr><td>9:20 - 10:10</td><td>A.P (Lakan)</td><td>A.P (Lakan)</td><td>A.P (Lakan)</td><td>A.P (Lakan)</td><td>Arts (Lakan)</td></tr>
+            <tr class="recess-row"><td>10:10-10:30</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>10:30 - 11:20</td><td>CPAR (STEM)</td><td>CPAR (STEM)</td><td>CPAR (STEM)</td><td></td><td></td></tr>
+            <tr><td>11:20 - 12:10</td><td></td><td>A.P (Datu)</td><td>P.E (Datu)</td><td>Health (Datu)</td><td>CPAR (STEM)</td></tr>
+            <tr><td>1:10 - 2:00</td><td>A.P (Datu)</td><td>Values Ed. (Rizal)</td><td>Values Ed. (Rizal)</td><td>A.P (Datu)</td><td>A.P (Datu)</td></tr>
+            <tr><td>2:00 - 2:50</td><td>Contemp Art (Laurel)</td><td>Contemp Art (Laurel)</td><td>A.P (Datu)</td><td>Contemp Art (Laurel)</td><td>Contem Art (Laurel)</td></tr>
+            <tr class="recess-row"><td>2:50 - 3:10</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>3:10 - 4:00</td><td>Values Ed. (Agui)</td><td>Values Ed. (Agui)</td><td>Values Ed. (Agui)</td><td>Values Ed. (Agui)</td><td>Values Ed. (Rizal)</td></tr>
+          </tbody>
+        </table>
+
+        <p class="room-info"><strong>Office:</strong> Faculty</p>
+
+        <p class="fun-facts">"Passionate"</p>
+      </div>
+    </article>
+
+<article class="teacher-card" tabindex="0" aria-expanded="false" aria-labelledby="teacher10-name" aria-describedby="teacher10-desc" data-name="Ms. Pyxz Fernandez" data-subjects="Science and GenBio">
+      <img src="pyxz.jfif" alt="Photo of Ms. Pyxz Fernandez" class="teacher-photo" />
+      <h3 id="teacher10-name" class="teacher-name">Ms. Pyxz Fernandez</h3>
+      <p class="subjects"><strong>Subjects:</strong> Science, General Biology</p>
+
+      <div class="details" id="teacher10-desc">
+        <table class="schedule-table" aria-label="Weekly schedule for Ms. Pyxz Fernandez">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>M</th>
+              <th>T</th>
+              <th>W</th>
+              <th>Th</th>
+              <th>F</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr><td>7:40 - 8:30</td><td></td><td>Science (Rizal)</td><td></td><td></td><td></td></tr>
+            <tr><td>8:30 - 9:20</td><td></td><td>Science (Burgos)</td><td>Science (Burgos)</td><td>Science (Burgos)</td><td></td></tr>
+            <tr><td>9:20 - 10:10</td><td>Science (Rizal)</td><td></td><td>Science (Burgos)</td><td></td><td></td></tr>
+            <tr class="recess-row"><td>10:10-10:30</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>10:30 - 11:20</td><td>Science (Rizal)</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>11:20 - 12:10</td><td>Science (Burgos)</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>1:10 - 2:00</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>2:00 - 2:50</td><td></td><td>Gen Bio (STEM)</td><td></td><td></td><td></td></tr>
+            <tr class="recess-row"><td>2:50 - 3:10</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>3:10 - 4:00</td><td></td><td></td><td></td><td></td><td></td></tr>
+          </tbody>
+        </table>
+
+        <p class="room-info"><strong>Office:</strong> Physics Laboratory</p>
+
+        <p class="fun-facts">"Jolly"</p>
+      </div>
+    </article>
+
+<article class="teacher-card" tabindex="0" aria-expanded="false" aria-labelledby="teacher11-name" aria-describedby="teacher11-desc" data-name="Ms. Nazie Grace Dulnuan" data-subjects="Math ESP PracticalResearch2">
+      <img src="nazie.jpg" alt="Photo of Ms. Nazie Grace Dulnuan" class="teacher-photo" />
+      <h3 id="teacher11-name" class="teacher-name">Ms. Nazie Grace Dulnuan</h3>
+      <p class="subjects"><strong>Subjects:</strong> Math, ESP, Practical Research 2</p>
+
+      <div class="details" id="teacher11-desc">
+        <table class="schedule-table" aria-label="Weekly schedule for Ms. Nazie Grace Dulnuan">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>M</th>
+              <th>T</th>
+              <th>W</th>
+              <th>Th</th>
+              <th>F</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr><td>7:40 - 8:30</td><td>Math (Datu)</td><td>Math (Datu)</td><td>Math (Datu)</td><td>Math (Datu)</td><td>Math (Datu)</td></tr>
+            <tr><td>8:30 - 9:20</td><td>Math (Magsaysay)</td><td>Math (Magsaysay)</td><td>Math (Magsaysay)</td><td>Math (Magsaysay)</td><td>Math (Magsaysay)</td></tr>
+            <tr><td>9:20 - 10:10</td><td></td><td>PR 2 (STEM)</td><td></td><td>PR 2 (STEM)</td><td>PR 2 (STEM)</td></tr>
+            <tr class="recess-row"><td>10:10-10:30</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>10:30 - 11:20</td><td>Math (Burgos)</td><td>Math (Burgos)</td><td>Math (Burgos)</td><td>Math (Burgos)</td><td>Math (Burgos)</td></tr>
+            <tr><td>11:20 - 12:10</td><td>ESP (Magsaysay)</td><td>ESP (Magsaysay)</td><td>ESP (Magsaysay)</td><td>ESP (Magsaysay)</td><td></td></tr>
+            <tr><td>1:10 - 2:00</td><td>PR 2 (STEM)</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>2:00 - 2:50</td><td>Homeroon Guidance (STEM)</td><td></td><td></td><td></td><td></td></tr>
+            <tr class="recess-row"><td>2:50 - 3:10</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>3:10 - 4:00</td><td></td><td></td><td></td><td></td><td></td></tr>
+          </tbody>
+        </table>
+
+        <p class="room-info"><strong>Office:</strong> Computer Laboratory</p>
+
+        <p class="fun-facts">"Jolly"</p>
+      </div>
+    </article>
+
+<article class="teacher-card" tabindex="0" aria-expanded="false" aria-labelledby="teacher12-name" aria-describedby="teacher12-desc" data-name="Ms. Fritzie Robles" data-subjects="OralCom DIAS and PR">
+      <img src="fritz.jpg" alt="Photo of Ms. Fritzie Robles" class="teacher-photo" />
+      <h3 id="teacher12-name" class="teacher-name">Ms. Fritzie Robles</h3>
+      <p class="subjects"><strong>Subjects:</strong> Oral Communication, DIAS, Practical Research</p>
+
+      <div class="details" id="teacher12-desc">
+        <table class="schedule-table" aria-label="Weekly schedule for Ms. Fritzie Robles">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>M</th>
+              <th>T</th>
+              <th>W</th>
+              <th>Th</th>
+              <th>F</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr><td>7:40 - 8:30</td><td></td><td>OralCom (San Juan)</td><td></td><td>OralCom (San Juan)</td><td>OralCom (San Juan)</td></tr>
+            <tr><td>8:30 - 9:20</td><td>OralCom (Laurel)</td><td>OralCom (Laurel)</td><td>OralCom (San Juan)</td><td>OralCom (Laurel)</td><td>OralCom (Laurel)</td></tr>
+            <tr><td>9:20 - 10:10</td><td>DIAS (HUMSS)</td><td>DIAS (HUMSS)</td><td>DIAS (HUMSS)</td><td>DIAS (HUMSS)</td><td></td></tr>
+            <tr class="recess-row"><td>10:10-10:30</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>10:30 - 11:20</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>11:20 - 12:10</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>1:10 - 2:00</td><td></td><td>PR (HUMSS)</td><td></td><td>PR (HUMSS)</td><td>PR (HUMSS)</td></tr>
+            <tr><td>2:00 - 2:50</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr class="recess-row"><td>2:50 - 3:10</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>3:10 - 4:00</td><td></td><td></td><td></td><td></td><td></td></tr>
+          </tbody>
+        </table>
+
+        <p class="room-info"><strong>Office:</strong> Guidance</p>
+
+        <p class="fun-facts">"Jolly"</p>
+      </div>
+    </article>
+
+<article class="teacher-card" tabindex="0" aria-expanded="false" aria-labelledby="teacher13-name" aria-describedby="teacher13-desc" data-name="Mr. MJ Valdez" data-subjects="Etech ComLit TLE and Media&Info">
+      <img src="mj.jpg" alt="Photo of Mr. MJ Valdez" class="teacher-photo" />
+      <h3 id="teacher13-name" class="teacher-name">Mr. MJ Valdez</h3>
+      <p class="subjects"><strong>Subjects:</strong> Empowerment Technologies, Computer Literacy, TLE and Media & Information</p>
+
+      <div class="details" id="teacher13-desc">
+        <table class="schedule-table" aria-label="Weekly schedule for Mr. MJ Valdez">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>M</th>
+              <th>T</th>
+              <th>W</th>
+              <th>Th</th>
+              <th>F</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr><td>7:40 - 8:30</td><td>E-Tech (San Juan)</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>8:30 - 9:20</td><td>TLE (Datu/Lakan)</td><td>TLE (Datu/Lakan)</td><td></td><td></td><td>TLE (Datu/Lakan)</td></tr>
+            <tr><td>9:20 - 10:10</td><td>TLE (Magsaysay)</td><td>TLE (Magsaysay)</td><td>ComLit (Gomez)</td><td>TLE (Magsaysay)</td><td>TLE (Magsaysay)</td></tr>
+            <tr class="recess-row"><td>10:10-10:30</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>10:30 - 11:20</td><td>E-Tech (Laurel)</td><td>E-Tech (Laurel)</td><td>E-Tech (Laurel)</td><td>E-Tech (Laurel)</td><td></td></tr>
+            <tr><td>11:20 - 12:10</td><td>Media  & Info (STEM)</td><td>Media  & Info (STEM)</td><td>Media  & Info (STEM)</td><td>Media  & Info (STEM)</td><td>TLE (Datu/Lakan)</td></tr>
+            <tr><td>1:10 - 2:00</td><td></td><td></td><td>ComLit (Burgos)</td><td></td><td>ComLit (Rizal)</td></tr>
+            <tr><td>2:00 - 2:50</td><td></td><td></td><td>ComLit (Aguinaldo)</td><td></td><td></td></tr>
+            <tr class="recess-row"><td>2:50 - 3:10</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>3:10 - 4:00</td><td></td><td>E-Tech (San Juan)</td><td>E-Tech (San Juan)</td><td></td><td>E-Tech (San Juan)</td></tr>
+          </tbody>
+        </table>
+
+        <p class="room-info"><strong>Office:</strong> Library</p>
+
+        <p class="fun-facts">"Master Coder"</p>
+      </div>
+    </article>
+
+<article class="teacher-card" tabindex="0" aria-expanded="false" aria-labelledby="teacher14-name" aria-describedby="teacher14-desc" data-name="Mr. Amir Novilla" data-subjects="PE&Health ESP Music MUsic&Arts Arts Health">
+      <img src="amir.jpg" alt="Photo of Mr. Amir Novilla" class="teacher-photo" />
+      <h3 id="teacher14-name" class="teacher-name">Mr. Amir Novilla</h3>
+      <p class="subjects"><strong>Subjects:</strong> MAPEH, ESP</p>
+
+      <div class="details" id="teacher14-desc">
+        <table class="schedule-table" aria-label="Weekly schedule for Mr. Amir Novilla">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>M</th>
+              <th>T</th>
+              <th>W</th>
+              <th>Th</th>
+              <th>F</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr><td>7:40 - 8:30</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>8:30 – 9:20</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>9:20 - 10:10</td><td>PE AND HEALTH (STEM)</td><td>MUSIC AND ARTS (GOMEZ)</td><td>MUSIC (MAGSAYSAY)</td><td></td><td>MUSIC AND ARTS (GOMEZ)</td></tr>
+            <tr class="recess-row"><td>10:10-10:30</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>10:30 - 11:20</td><td>ESP(DATU)</td><td></td><td>ESP(DATU)</td><td>ARTS(DATU)</td><td></td></tr>
+            <tr><td>11:20 - 12:10</td><td>MUSIC (DATU)</td><td>PE AND HEALTH (SAN JUAN)</td><td></td><td></td><td></td></tr>
+            <tr><td>1:10 - 2:00</td><td>PE AND HEALTH (LAUREL)</td><td>ESP (DATU)</td><td></td><td>HEALTH (BURGOS)</td><td>PE AND HEALTH (GOMEZ)</td></tr>
+            <tr><td>2:00 - 2:50</td><td>MUSIC AND ARTS (AGUINALDO)</td><td>MUSIC AND ARTS (AGUINALDO)</td><td>PE AND HEALTH (GOMEZ)</td><td>HEALTH (AGUINALDO)</td><td>PE AND HEALTH (RIZAL)</td></tr>
+            <tr class="recess-row"><td>2:50 - 3:10</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>3:10 - 4:00</td><td>PE AND HEALTH (RIZAL)</td><td>HOMEROOM GUIDANCE(LAUREL)</td><td>MUSIC AND ARTS(RIZAL)</td><td>MUSIC AND ARTS (RIZAL)</td><td>ESP(DATU)</td></tr>
+          </tbody>
+        </table>
+
+        <p class="room-info"><strong>Office:</strong> Faculty</p>
+
+        <p class="fun-facts">"All-Arounder"</p>
+      </div>
+    </article>
+
+<article class="teacher-card" tabindex="0" aria-expanded="false" aria-labelledby="teacher15-name" aria-describedby="teacher15-desc" data-name="Ms. China David" data-subjects="English IntrotoPhilosophy CreativeWriting Arts PE&Health ">
+      <img src="china.jpg" alt="Photo of Ms. China David" class="teacher-photo" />
+      <h3 id="teacher15-name" class="teacher-name">Ms. China David</h3>
+      <p class="subjects"><strong>Subjects:</strong> English, Intro to Philosophy, Creative Writing, Arts, PE & Health</p>
+
+      <div class="details" id="teacher15-desc">
+        <table class="schedule-table" aria-label="Weekly schedule for Ms. China David">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>M</th>
+              <th>T</th>
+              <th>W</th>
+              <th>Th</th>
+              <th>F</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr><td>7:40 - 8:30</td><td>English (Burgos)</td><td>English (Burgos)</td><td>English (Burgos)</td><td>English (Burgos)</td><td>English (Burgos)</td></tr>
+            <tr><td>8:30 - 9:20</td><td>English (Agui</td><td>English (Agui)</td><td>English (Agui)</td><td>English (Agui)</td><td>English (Agui)</td></tr>
+            <tr><td>9:20 - 10:10</td><td></td><td></td><td></td><td></td><td></td></tr>
+           <tr class="recess-row"><td>10:10-10:30</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>10:30 - 11:20</td><td>Intro to Philo (HUMSS)</td><td>Intro to Philo (HUMSS)</td><td></td><td>Intro to Philo (HUMSS)</td><td>Intro to Philo (HUMSS)</td></tr>
+            <tr><td>11:20 - 12:10</td><td>Creative Writing (HUMSS)</td><td>Creative Writing (HUMSS)</td><td>Creative Writing (HUMSS)</td><td>P.E and Health</td><td>Creative Writing (HUMSS)</td></tr>
+            <tr><td>1:10 - 2:00</td><td></td><td></td><td>English (Datu)</td><td>English (Datu)</td><td>HOMEROOM GUIDANCE (Agui)</td></tr>
+            <tr><td>2:00 - 2:50</td><td>English (Datu)</td><td>English (Datu)</td><td></td><td></td><td>English (Datu)</td></tr>
+            <tr class="recess-row"><td>2:50 - 3:10</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>3:10 - 4:00</td><td></td><td></td><td>P.E/Health (Magsaysay)</td><td>Arts (Magsaysay)</td><td></td></tr>
+          </tbody>
+        </table>
+
+        <p class="room-info"><strong>Office:</strong> Faculty</p>
+
+        <p class="fun-facts">"All-Arounder"</p>
+      </div>
+    </article>
+
+
+<article class="teacher-card" tabindex="0" aria-expanded="false" aria-labelledby="teacher16-name" aria-describedby="teacher16-desc" data-name="Ms. Lovely Yere" data-subjects="Math Music Science EarthandLifeScience">
+      <img src="https://img.icons8.com/?size=100&id=7823&format=png&color=000000" alt="Photo of Ms. Lovely Yere" class="teacher-photo" />
+      <h3 id="teacher16-name" class="teacher-name">Ms. Lovely Yere</h3>
+      <p class="subjects"><strong>Subjects:</strong> Math, Music, Science, Earth and Life Science</p>
+
+      <div class="details" id="teacher16-desc">
+        <table class="schedule-table" aria-label="Weekly schedule for Ms. Lovely Yere">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>M</th>
+              <th>T</th>
+              <th>W</th>
+              <th>Th</th>
+              <th>F</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>7:40 - 8:30</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>8:30 - 9:20</td><td></td><td>Math (Gomez)</td><td>Math (Gomez)</td><td>Math (Gomez)</td><td>Math (Gomez)</td></tr>
+            <tr><td>9:20 - 10:10</td><td>Science (Datu)</td><td>Science (Datu)</td><td>Science (Datu)</td><td>Science (Datu)</td><td>Science (Datu)</td></tr>
+            <tr class="recess-row"><td>10:10-10:30</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>10:30 - 11:20</td><td></td><td></td><td>Science (Lakan)</td><td></td><td>Science (Datu)</td></tr>
+            <tr><td>11:20 - 12:10</td><td>Science (Lakan)</td><td>Science (Lakan)</td><td>Science (Lakan)</td><td>Science (Lakan)</td><td>Earth and Life (Laurel)</td></tr>
+            <tr><td>1:10 - 2:00</td><td>Science (Magsaysay)</td><td>Earth and Life (Laurel)</td><td>Earth and Life (Laurel)</td><td>Earth and Life (Laurel)</td><td>Science (Lakan)</td></tr>
+            <tr><td>2:00 - 2:50</td><td>Science (Magsaysay)</td><td>Science (Magsaysay)</td><td>Science (Magsaysay)</td><td>Science (Magsaysay)</td><td>Science (Magsaysay)</td></tr>
+            <tr class="recess-row"><td>2:50 - 3:10</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td><td>Recess</td></tr>
+            <tr><td>3:10 - 4:00</td><td>Math (Gomez)</td><td></td><td></td><td>HOMEROOM GUIDANCE (Gomez)</td><td></td></tr>
+          </tbody>
+        </table>
+
+        <p class="room-info"><strong>Office:</strong> Biology Laboratory</p>
+
+        <p class="fun-facts">""</p>
+      </div>
+    </article>
+
+  </div>
+
+  <div class="back-home">
+    <a href="mainwebpage.html" class="back-home" title="Back to Home">← Back Home</a>
+  </div>
+
+  <!-- Floating decorative leaves -->
+  <div class="floating-leaf top-right" aria-hidden="true"></div>
+  <div class="floating-leaf bottom-left" aria-hidden="true"></div>
+
+  <script>
+    const teacherCards = document.querySelectorAll('.teacher-card');
+    const searchInput = document.getElementById('teacherSearch');
+    const teachersContainer = document.querySelector('.teachers-container');
+
+    // Toggle expand/collapse on click or keyboard
+    teacherCards.forEach(card => {
+      card.addEventListener('click', () => {
+        const isExpanded = card.classList.contains('expanded');
+
+        teacherCards.forEach(c => {
+          c.classList.remove('expanded');
+          c.setAttribute('aria-expanded', 'false');
+        });
+
+        if (!isExpanded) {
+          card.classList.add('expanded');
+          card.setAttribute('aria-expanded', 'true');
+          // Scroll into view smoothly
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      });
+      card.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          card.click();
+        }
+      });
+    });
+
+    // Collapse all cards if clicking outside
+    document.addEventListener('click', e => {
+      if (!e.target.closest('.teacher-card') && !e.target.closest('#teacherSearch')) {
+        teacherCards.forEach(c => {
+          c.classList.remove('expanded');
+          c.setAttribute('aria-expanded', 'false');
+        });
+      }
+    });
+
+    // Search filter function
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.trim().toLowerCase();
+
+      teacherCards.forEach(card => {
+        const name = card.getAttribute('data-name').toLowerCase();
+        const subjects = card.getAttribute('data-subjects').toLowerCase();
+
+        if (name.includes(query) || subjects.includes(query)) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+          // Also collapse if hidden
+          card.classList.remove('expanded');
+          card.setAttribute('aria-expanded', 'false');
+        }
+      });
+    });
+  </script>
+</body>
+</html> 

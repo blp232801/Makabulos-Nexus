@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>School Facilities</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+      font-family:'Montserrat',sans-serif;
+      min-height:100vh;
+      background:linear-gradient(-45deg,#e0f7fa,#f1f8e9,#fce4ec,#fff3e0);
+      background-size:400% 400%;
+      animation:gradientShift 15s ease infinite;
+      display:flex;
+      flex-direction:column;
+      overflow-x:hidden
+    }
+    @keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    header{
+      background:linear-gradient(90deg,#006400,#228b22);
+      color:#fff;
+      padding:25px 40px;
+      text-align:center;
+      box-shadow:0 4px 20px rgba(0,0,0,0.3);
+      position:relative
+    }
+    header h1{font-size:32px;font-weight:900;letter-spacing:1px}
+    .back-home{
+      position:absolute;
+      left:20px;top:20px;
+      background:#fff;
+      color:#006400;
+      font-weight:600;
+      padding:10px 18px;
+      border-radius:30px;
+      text-decoration:none;
+      box-shadow:0 4px 12px rgba(0,0,0,0.25);
+      transition:.3s
+    }
+    .back-home:hover{background:#006400;color:#fff;transform:scale(1.05)}
+    .facilities{
+      flex:1;
+      margin:50px auto;
+      padding:20px;
+      max-width:100%;
+      overflow:hidden;
+      text-align:center
+    }
+    .facilities h2{
+      font-size:34px;
+      margin-bottom:10px;
+      color:#006400;
+      text-shadow:0 2px 8px rgba(0,0,0,0.15)
+    }
+    .subtitle{font-size:1.2rem;margin-bottom:40px;color:#2d6a4f;font-style:italic}
+    .facilities-track{
+      display:flex;
+      gap:28px;
+      padding:20px;
+      overflow-x:auto;
+      scroll-snap-type:x mandatory;
+      -webkit-overflow-scrolling:touch;
+      scroll-behavior:smooth
+    }
+    .facilities-track::-webkit-scrollbar{height:10px}
+    .facilities-track::-webkit-scrollbar-thumb{background:#228b22;border-radius:6px}
+    .facility-card{
+      flex:0 0 280px;
+      scroll-snap-align:center;
+      position:relative;
+      padding:60px 25px 40px;
+      border-radius:24px;
+      cursor:pointer;
+      background:rgba(255,255,255,0.8);
+      overflow:hidden;
+      transition:transform .5s cubic-bezier(.19,1,.22,1),box-shadow .5s;
+      box-shadow:0 10px 25px rgba(0,0,0,0.15);
+      transform:rotateY(var(--rotateY,0deg)) rotateX(var(--rotateX,0deg))
+    }
+    .facility-card::before{
+      content:"";
+      position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+      background:conic-gradient(from 180deg at 50% 50%,#81c784,#64b5f6,#ff8a65,#ba68c8,#81c784);
+      animation:spin 8s linear infinite;
+      z-index:-1;
+      opacity:0.35
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .facility-card:hover{
+      transform:scale(1.08) rotateY(var(--rotateY,0deg)) rotateX(var(--rotateX,0deg));
+      box-shadow:0 18px 40px rgba(0,0,0,0.25)
+    }
+    .facility-inner{
+      background:rgba(255,255,255,0.9);
+      border-radius:20px;
+      padding:30px 20px;
+      height:100%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center
+    }
+    .facility-icon{
+      font-size:55px;
+      margin-bottom:20px;
+      animation:float 4s ease-in-out infinite
+    }
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+    .facility-card h3{font-size:22px;font-weight:700;color:#064d2a}
+    .facility-modal{
+      position:fixed;top:0;left:0;right:0;bottom:0;
+      background:rgba(0,0,0,0.65);
+      backdrop-filter:blur(6px);
+      display:none;align-items:center;justify-content:center;
+      z-index:2000
+    }
+    .modal-content{
+      background:#fff;
+      border-radius:20px;
+      padding:50px;
+      max-width:650px;
+      width:90%;
+      text-align:center;
+      color:#064d2a;
+      position:relative;
+      animation:popIn .4s ease
+    }
+    @keyframes popIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+    .modal-content h2{margin-bottom:18px;font-size:28px;color:#006400}
+    .modal-content p{font-size:1.1rem;line-height:1.7;color:#333}
+    .close-btn{position:absolute;top:12px;right:20px;font-size:30px;cursor:pointer;color:#333;transition:.3s}
+    .close-btn:hover{color:#a00;transform:rotate(90deg)}
+    footer{
+      background:linear-gradient(90deg,#006400,#228b22);
+      color:white;text-align:center;padding:18px;font-size:15px;
+      box-shadow:0 -4px 20px rgba(0,0,0,0.3)
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="mainwebpage.html" class="back-home">⬅ Home</a>
+    <h1>Makabulos Memorial High School</h1>
+  </header>
+
+  <section class="facilities">
+    <h2>🏫 School Facilities</h2>
+    <p class="subtitle">Explore each facilities our school has to offer!</p>
+    <div class="facilities-track" id="facilitiesTrack">
+      <div class="facility-card" data-facility="faculty"><div class="facility-inner"><div class="facility-icon">👩‍🏫</div><h3>Faculty Room</h3></div></div>
+      <div class="facility-card" data-facility="physics"><div class="facility-inner"><div class="facility-icon">⚛️</div><h3>Physics Lab</h3></div></div>
+      <div class="facility-card" data-facility="chem"><div class="facility-inner"><div class="facility-icon">⚗️</div><h3>Chemistry Lab</h3></div></div>
+      <div class="facility-card" data-facility="bio"><div class="facility-inner"><div class="facility-icon">🧬</div><h3>Biology Lab</h3></div></div>
+      <div class="facility-card" data-facility="library"><div class="facility-inner"><div class="facility-icon">📚</div><h3>Library</h3></div></div>
+      <div class="facility-card" data-facility="tle"><div class="facility-inner"><div class="facility-icon">🛠️</div><h3>TLE Room</h3></div></div>
+    </div>
+  </section>
+
+  <div class="facility-modal" id="facilityModal">
+    <div class="modal-content">
+      <span class="close-btn">&times;</span>
+      <h2 id="facilityTitle"></h2>
+      <p id="facilityDescription"></p>
+    </div>
+  </div>
+
+  <footer><p>&copy; 1939 Makabulos Memorial High School | All Rights Reserved</p></footer>
+
+  <script>
+    const facilityData={
+      faculty:{title:"Faculty Room",description:"The Faculty Room serves as the hub for our teachers, where they prepare lessons, collaborate, and mentor students."},
+      physics:{title:"Physics Laboratory",description:"Equipped with advanced apparatus, the Physics Lab fosters curiosity and hands-on experimentation in the physical sciences."},
+      chem:{title:"Chemistry Laboratory",description:"The Chemistry Lab provides a safe space for experiments and the study of chemical reactions with proper equipment."},
+      bio:{title:"Biology Laboratory",description:"The Biology Lab immerses students in life sciences through experiments, microscopes, and models."},
+      library:{title:"Library",description:"Our library is a knowledge hub with books, journals, and digital resources that support research and self-learning."},
+      tle:{title:"TLE Room",description:"The TLE Room is dedicated to skill-building in technology, livelihood, and home economics for real-world applications."}
+    };
+    const cards=document.querySelectorAll('.facility-card');
+    const modal=document.getElementById('facilityModal');
+    const facilityTitle=document.getElementById('facilityTitle');
+    const facilityDescription=document.getElementById('facilityDescription');
+    const closeBtn=document.querySelector('.close-btn');
+    cards.forEach(card=>{
+      card.addEventListener('mousemove',e=>{
+        const rect=card.getBoundingClientRect();
+        const x=e.clientX-rect.left;
+        const y=e.clientY-rect.top;
+        const rotateY=((x/rect.width)-0.5)*20;
+        const rotateX=((y/rect.height)-0.5)*-20;
+        card.style.setProperty('--rotateY',`${rotateY}deg`);
+        card.style.setProperty('--rotateX',`${rotateX}deg`);
+      });
+      card.addEventListener('mouseleave',()=>{card.style.setProperty('--rotateY','0deg');card.style.setProperty('--rotateX','0deg');});
+      card.addEventListener('click',()=>{
+        const facility=card.getAttribute('data-facility');
+        facilityTitle.textContent=facilityData[facility].title;
+        facilityDescription.textContent=facilityData[facility].description;
+        modal.style.display='flex';
+      });
+    });
+    closeBtn.addEventListener('click',()=>{modal.style.display='none';});
+    window.addEventListener('click',e=>{if(e.target===modal)modal.style.display='none';});
+
+    const track=document.getElementById('facilitiesTrack');
+    let autoScroll=setInterval(()=>{track.scrollBy({left:300,behavior:'smooth'});if(track.scrollLeft+track.clientWidth>=track.scrollWidth){track.scrollTo({left:0,behavior:'smooth'});}},3000);
+    track.addEventListener('mouseenter',()=>clearInterval(autoScroll));
+    track.addEventListener('mouseleave',()=>{autoScroll=setInterval(()=>{track.scrollBy({left:300,behavior:'smooth'});if(track.scrollLeft+track.clientWidth>=track.scrollWidth){track.scrollTo({left:0,behavior:'smooth'});}},3000);});
+  </script>
+</body>
+</html>
