@@ -130,6 +130,12 @@
     @keyframes popIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
     .modal-content h2{margin-bottom:18px;font-size:28px;color:#006400}
     .modal-content p{font-size:1.1rem;line-height:1.7;color:#333}
+    .modal-image{
+      width:100%;
+      border-radius:15px;
+      margin-bottom:20px;
+      box-shadow:0 5px 15px rgba(0,0,0,0.2);
+    }
     .close-btn{position:absolute;top:12px;right:20px;font-size:30px;cursor:pointer;color:#333;transition:.3s}
     .close-btn:hover{color:#a00;transform:rotate(90deg)}
     footer{
@@ -150,7 +156,7 @@
     <p class="subtitle">Explore each facilities our school has to offer!</p>
     <div class="facilities-track" id="facilitiesTrack">
       <div class="facility-card" data-facility="faculty"><div class="facility-inner"><div class="facility-icon">👩‍🏫</div><h3>Faculty Room</h3></div></div>
-      <div class="facility-card" data-facility="physics"><div class="facility-inner"><div class="facility-icon">⚛️</div><h3>Physics Lab</h3></div></div>
+      <div class="facility-card" data-facility="physics"><div class="facility-inner"><div class="facility-icon">💻</div><h3>Computer Lab</h3></div></div>
       <div class="facility-card" data-facility="chem"><div class="facility-inner"><div class="facility-icon">⚗️</div><h3>Chemistry Lab</h3></div></div>
       <div class="facility-card" data-facility="bio"><div class="facility-inner"><div class="facility-icon">🧬</div><h3>Biology Lab</h3></div></div>
       <div class="facility-card" data-facility="library"><div class="facility-inner"><div class="facility-icon">📚</div><h3>Library</h3></div></div>
@@ -161,6 +167,7 @@
   <div class="facility-modal" id="facilityModal">
     <div class="modal-content">
       <span class="close-btn">&times;</span>
+      <img id="facilityImage" class="modal-image" src="" alt="">
       <h2 id="facilityTitle"></h2>
       <p id="facilityDescription"></p>
     </div>
@@ -170,18 +177,21 @@
 
   <script>
     const facilityData={
-      faculty:{title:"Faculty Room",description:"The Faculty Room serves as the hub for our teachers, where they prepare lessons, collaborate, and mentor students."},
-      physics:{title:"Physics Laboratory",description:"Equipped with advanced apparatus, the Physics Lab fosters curiosity and hands-on experimentation in the physical sciences."},
-      chem:{title:"Chemistry Laboratory",description:"The Chemistry Lab provides a safe space for experiments and the study of chemical reactions with proper equipment."},
-      bio:{title:"Biology Laboratory",description:"The Biology Lab immerses students in life sciences through experiments, microscopes, and models."},
-      library:{title:"Library",description:"Our library is a knowledge hub with books, journals, and digital resources that support research and self-learning."},
-      tle:{title:"TLE Room",description:"The TLE Room is dedicated to skill-building in technology, livelihood, and home economics for real-world applications."}
+      faculty:{title:"Faculty Room",description:"The Faculty Room serves as the hub for our teachers, where they prepare lessons, collaborate, and mentor students.",image:"faculty.jfif"},
+      physics:{title:"Computer Laboratory",description:"The Computer Lab is a dedicated space where students explore technology, enhance digital skills, and complete ICT-related tasks using modern computers and software.",image:"comlab.jfif"},
+      chem:{title:"Chemistry Laboratory",description:"The Chemistry Lab provides a safe space for experiments and the study of chemical reactions with proper equipment.",image:"chemlab.jfif"},
+      bio:{title:"Biology Laboratory",description:"The Biology Lab immerses students in life sciences through experiments, microscopes, and models.",image:"biolab.jfif"},
+      library:{title:"Library",description:"Our library is a knowledge hub with books, journals, and digital resources that support research and self-learning.",image:"library.jfif"},
+      tle:{title:"TLE Room",description:"The TLE Room is dedicated to skill-building in technology, livelihood, and home economics for real-world applications.",image:"tle.jfif"}
     };
+
     const cards=document.querySelectorAll('.facility-card');
     const modal=document.getElementById('facilityModal');
     const facilityTitle=document.getElementById('facilityTitle');
     const facilityDescription=document.getElementById('facilityDescription');
+    const facilityImage=document.getElementById('facilityImage');
     const closeBtn=document.querySelector('.close-btn');
+
     cards.forEach(card=>{
       card.addEventListener('mousemove',e=>{
         const rect=card.getBoundingClientRect();
@@ -192,22 +202,39 @@
         card.style.setProperty('--rotateY',`${rotateY}deg`);
         card.style.setProperty('--rotateX',`${rotateX}deg`);
       });
-      card.addEventListener('mouseleave',()=>{card.style.setProperty('--rotateY','0deg');card.style.setProperty('--rotateX','0deg');});
+      card.addEventListener('mouseleave',()=>{
+        card.style.setProperty('--rotateY','0deg');
+        card.style.setProperty('--rotateX','0deg');
+      });
       card.addEventListener('click',()=>{
         const facility=card.getAttribute('data-facility');
         facilityTitle.textContent=facilityData[facility].title;
         facilityDescription.textContent=facilityData[facility].description;
+        facilityImage.src=facilityData[facility].image;
+        facilityImage.alt=facilityData[facility].title;
         modal.style.display='flex';
       });
     });
+
     closeBtn.addEventListener('click',()=>{modal.style.display='none';});
     window.addEventListener('click',e=>{if(e.target===modal)modal.style.display='none';});
 
     const track=document.getElementById('facilitiesTrack');
-    let autoScroll=setInterval(()=>{track.scrollBy({left:300,behavior:'smooth'});if(track.scrollLeft+track.clientWidth>=track.scrollWidth){track.scrollTo({left:0,behavior:'smooth'});}},3000);
+    let autoScroll=setInterval(()=>{
+      track.scrollBy({left:300,behavior:'smooth'});
+      if(track.scrollLeft+track.clientWidth>=track.scrollWidth){
+        track.scrollTo({left:0,behavior:'smooth'});
+      }
+    },3000);
     track.addEventListener('mouseenter',()=>clearInterval(autoScroll));
-    track.addEventListener('mouseleave',()=>{autoScroll=setInterval(()=>{track.scrollBy({left:300,behavior:'smooth'});if(track.scrollLeft+track.clientWidth>=track.scrollWidth){track.scrollTo({left:0,behavior:'smooth'});}},3000);});
+    track.addEventListener('mouseleave',()=>{
+      autoScroll=setInterval(()=>{
+        track.scrollBy({left:300,behavior:'smooth'});
+        if(track.scrollLeft+track.clientWidth>=track.scrollWidth){
+          track.scrollTo({left:0,behavior:'smooth'});
+        }
+      },3000);
+    });
   </script>
 </body>
 </html>
-
