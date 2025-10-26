@@ -378,12 +378,10 @@
       <h3>Homeworks</h3>
       <p>Track your Homeworks.</p>
     </a>
-
-    <!-- NEW card for Facilities (as requested) -->
     <a href="facilities.html" class="card" aria-label="School facilities">
       <img src="https://img.icons8.com/ios-filled/50/006400/room.png" alt="Facilities" />
       <h3>Facilities</h3>
-      <p>View school facilities & schedules.</p>
+      <p>View school facilities.</p>
     </a>
 
     <a href="about.html" class="card">
@@ -396,16 +394,15 @@
   <section class="announcements" aria-live="polite">
     <h2>Latest Announcements</h2>
     <div class="announcement">
-      <h4>📘 Second Monthly Exams</h4>
-      <p>Scheduled on September 19 and September 22. All students are advised to check the exam schedule posted in their class dashboards.</p>
+      <h4>📘 Semestral Exams!</h4>
+      <p>Scheduled on October 28-29. Improve your grades, make efforts!</p>
     </div>
     <div class="announcement">
-      <h4>🎉 Mini Tasks Day</h4>
-      <p>Scheduled on September 23-24.</p>
+      <h4>🎉 Last Performance Task for 1st Semester!</h4>
+      <p>Scheduled on October 27 & 30.</p>
     </div>
   </section>
 
-  <!-- NEW Mission & Vision section (keeps your concept, added a styled block) -->
   <section class="mv-section" aria-labelledby="mvHeading">
     <div class="mv-card" id="mvHeading" style="display:flex; align-items:flex-start; gap:18px; flex-direction:column;">
       <h3 style="margin-bottom:6px;">Our Mission & Vision</h3>
@@ -429,15 +426,14 @@
   <section class="poll-section" aria-labelledby="pollHeading">
     <h2 id="pollHeading">What events would you like next?</h2>
     <form id="pollForm">
-      <label><input type="radio" name="event" value="Sports Day" required> 🏀 Sports Day</label>
-      <label><input type="radio" name="event" value="Cultural Festival"> 🎭 Cultural Festival</label>
-      <label><input type="radio" name="event" value="Science Fair"> 🔬 Science Fair</label>
-      <label><input type="radio" name="event" value="Art Competition"> 🎨 Art Competition</label>
+      <label><input type="radio" name="event" value="Sports Day" required> Sports Day</label>
+      <label><input type="radio" name="event" value="Cultural Festival"> Cultural Festival</label>
+      <label><input type="radio" name="event" value="FoodFest"> FoodFest</label>
+      <label><input type="radio" name="event" value="Family Day"> Family Day</label>
       <br />
       <button type="submit">Vote</button>
     </form>
-
-    <!-- keep remove button in DOM but hidden because per-request we allow multiple votes (no per-user blocking) -->
+    
     <button id="removeVoteBtn" style="margin-top: 15px; display:none; background:#a00; color:#fff; border:none; padding:10px 20px; border-radius:6px; cursor:pointer;">
       Remove Vote
     </button>
@@ -454,17 +450,11 @@
   </footer>
 
   <script>
-    /* Poll JS: changed to allow multiple votes from same browser (no per-user blocking).
-       We keep counts in localStorage only so votes persist across reloads, but we no longer
-       block repeated votes or store a 'user last vote'. This supports multiple votes when
-       you don't have a backend database, as requested. */
-
     const pollForm = document.getElementById('pollForm');
     const resultsList = document.getElementById('resultsList');
     const removeVoteBtn = document.getElementById('removeVoteBtn');
     const pollKey = 'makabulosPollVotes';
-
-    // keep the same initial options and counts
+    
     let votes = JSON.parse(localStorage.getItem(pollKey)) || {
       "Sports Day": 0,
       "Cultural Festival": 0,
@@ -472,7 +462,7 @@
       "Art Competition": 0
     };
 
-    // Helper: writes UI results
+
     function displayResults() {
       resultsList.innerHTML = '';
       const totalVotes = Object.values(votes).reduce((a,b) => a+b, 0);
@@ -491,21 +481,19 @@
       }
     }
 
-    // Initial render
+  
     displayResults();
-
-    // Submit handler: allows voting multiple times (increments the count and persists)
     pollForm.addEventListener('submit', e => {
       e.preventDefault();
       const formData = new FormData(pollForm);
       const selectedOption = formData.get('event');
 
       if (!selectedOption) {
-        // keep behavior consistent with your original validation
+        
         return alert('Please select an option to vote.');
       }
 
-      // Allow multiple votes: just increment and persist
+      
       if (votes.hasOwnProperty(selectedOption)) {
         votes[selectedOption]++;
         localStorage.setItem(pollKey, JSON.stringify(votes));
@@ -522,3 +510,4 @@
   </script>
 </body>
 </html>
+
