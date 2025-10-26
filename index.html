@@ -428,8 +428,8 @@
     <form id="pollForm">
       <label><input type="radio" name="event" value="Sports Day" required> Sports Day</label>
       <label><input type="radio" name="event" value="Cultural Festival"> Cultural Festival</label>
-      <label><input type="radio" name="event" value="FoodFest"> FoodFest</label>
-      <label><input type="radio" name="event" value="Family Day"> Family Day</label>
+      <label><input type="radio" name="event" value="Science Fair"> Science Fair</label>
+      <label><input type="radio" name="event" value="Art Competition"> Art Competition</label>
       <br />
       <button type="submit">Vote</button>
     </form>
@@ -458,8 +458,8 @@
     let votes = JSON.parse(localStorage.getItem(pollKey)) || {
       "Sports Day": 0,
       "Cultural Festival": 0,
-      "FoodFest": 0,
-      "Family Day": 0
+      "Science Fair": 0,
+      "Art Competition": 0
     };
 
 
@@ -510,6 +510,7 @@
   </script>
 </body>
 </html>
+
 
 
 
