@@ -459,28 +459,94 @@ body::after {
 <div class="sparkle" style="left:70%;animation-delay:1s;"></div>
 <div class="sparkle" style="left:90%;animation-delay:3s;"></div>
 
-<script>
-const maleCards = document.querySelectorAll('#male-candidates .card');
-const femaleCards = document.querySelectorAll('#female-candidates .card');
-const voteButtons = document.querySelectorAll('.vote-btn');
+<!-- Add Firebase SDK scripts in your <head> -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-function getVotesFromStorage(id){ return parseInt(localStorage.getItem(id)) || 0; }
-function saveVotesToStorage(id,votes){ localStorage.setItem(id,votes); }
-function updateVotesDisplay(card){ const id=card.dataset.id; card.querySelector('.votes').textContent=`Votes: ${getVotesFromStorage(id)}`; }
-function updateCrown(cards){
-  let maxVotes=-1, topCard=null;
-  cards.forEach(card=>{ const votes=getVotesFromStorage(card.dataset.id); if(votes>maxVotes){ maxVotes=votes; topCard=card; }});
-  cards.forEach(card=>{ const crown=card.querySelector('.crown'); const votes=getVotesFromStorage(card.dataset.id); if(card===topCard && votes>0){ if(!crown){ const img=document.createElement('img'); img.src='https://cdn-icons-png.flaticon.com/512/1828/1828884.png'; img.className='crown'; card.querySelector('.card-content').appendChild(img); }} else if(crown){ crown.remove(); }});
-}
-[...maleCards,...femaleCards].forEach(card=> updateVotesDisplay(card));
-voteButtons.forEach(btn=>{ btn.addEventListener('click',e=>{ e.stopPropagation(); const card=btn.closest('.card'); const id=card.dataset.id; let votes=getVotesFromStorage(id); votes++; saveVotesToStorage(id,votes); updateVotesDisplay(card); updateCrown(maleCards); updateCrown(femaleCards); });});
-document.querySelectorAll('.card').forEach(card=>{ card.addEventListener('click',e=>{ if(e.target.closest('.vote-btn')) return; card.classList.toggle('expanded'); });});
-updateCrown(maleCards);
-updateCrown(femaleCards);
+<script>
+  // Initialize Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyBn7cSXwAAm6f5vhUQw3IIHoCoTUJ4G6dc",
+    authDomain: "poll-cc59a.firebaseapp.com",
+    databaseURL: "https://poll-cc59a-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "poll-cc59a",
+    storageBucket: "poll-cc59a.firebasestorage.app",
+    messagingSenderId: "109784141891",
+    appId: "1:109784141891:web:ed87e81cf966faaf3bc4f6",
+    measurementId: "G-B6F29X0YR5"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  const allCards = document.querySelectorAll('.card');
+
+  // Fetch votes from Firebase on page load
+  allCards.forEach(card => {
+    const id = card.dataset.id;
+    db.ref('votes/' + id).get().then(snapshot => {
+      if(snapshot.exists()){
+        card.querySelector('.votes').textContent = `Votes: ${snapshot.val()}`;
+      }
+    });
+  });
+
+  // Update crown based on votes
+  function updateCrown(cards){
+    let maxVotes = -1, topCard = null;
+    cards.forEach(card=>{
+      const votes = parseInt(card.querySelector('.votes').textContent.replace('Votes: ',''));
+      if(votes > maxVotes){ maxVotes = votes; topCard = card; }
+    });
+    cards.forEach(card=>{
+      const crown = card.querySelector('.crown');
+      const votes = parseInt(card.querySelector('.votes').textContent.replace('Votes: ',''));
+      if(card === topCard && votes > 0){
+        if(!crown){
+          const img = document.createElement('img');
+          img.src='https://cdn-icons-png.flaticon.com/512/1828/1828884.png';
+          img.className='crown';
+          card.querySelector('.card-content').appendChild(img);
+        }
+      } else if(crown){ crown.remove(); }
+    });
+  }
+
+  // Vote button click
+  document.querySelectorAll('.vote-btn').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      e.stopPropagation();
+      const card = btn.closest('.card');
+      const id = card.dataset.id;
+
+      const votesRef = db.ref('votes/' + id);
+      votesRef.transaction(current => (current || 0) + 1, (error, committed, snapshot) => {
+        if(error){ console.error('Vote failed', error); }
+        else { card.querySelector('.votes').textContent = `Votes: ${snapshot.val()}`; updateCrown(allCards); }
+      });
+    });
+  });
+
+  // Expand card info
+  document.querySelectorAll('.card').forEach(card=>{
+    card.addEventListener('click', e=>{
+      if(e.target.closest('.vote-btn')) return;
+      card.classList.toggle('expanded');
+    });
+  });
+
+  // Initial crown update
+  updateCrown(allCards);
+
+  // Listen for real-time updates
+  db.ref('votes').on('value', snapshot=>{
+    snapshot.forEach(child => {
+      const id = child.key;
+      const votes = child.val();
+      const card = document.querySelector(`.card[data-id='${id}']`);
+      if(card){ card.querySelector('.votes').textContent = `Votes: ${votes}`; }
+    });
+    updateCrown(allCards);
+  });
 </script>
 </body>
 </html>
-
-
-
-
