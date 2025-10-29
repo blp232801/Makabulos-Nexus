@@ -197,12 +197,12 @@
         parent: document.getElementById('parentName').value,
         contact: document.getElementById('contactNumber').value
       };
-      let submissions = JSON.parse(localStorage.getItem('registrations')) || [];
-      submissions.push(data);
-      localStorage.setItem('registrations', JSON.stringify(submissions));
-      window.location.href = "submitted.html";
-    });
-
+      db.ref('registrations').push(data)
+    .then(() => {
+      window.location.href = "submitted.html"; // redirect after saving
+    })
+    .catch(err => alert("Error saving registration: " + err));
+});
     function goHome() {
       window.location.href = "index.html";
     }
@@ -212,5 +212,6 @@
   </script>
 </body>
 </html>
+
 
 
