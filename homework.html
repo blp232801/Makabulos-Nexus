@@ -336,6 +336,47 @@
     padding: 6px 8px;
   }
 }
+    /* ✅ SHRINK HOMEWORK / SCHEDULE TABLE FOR MOBILE */
+@media (max-width: 700px) {
+  table,
+  .schedule-table,
+  .calendar,
+  .homework-table {
+    width: 100%;
+    table-layout: fixed;
+    font-size: 0.65rem;
+    border-collapse: collapse;
+    word-wrap: break-word;
+  }
+
+  table th,
+  table td,
+  .schedule-table th,
+  .schedule-table td {
+    padding: 4px 3px;
+    text-align: center;
+    white-space: normal;
+  }
+
+  table th:first-child,
+  table td:first-child,
+  .schedule-table th:first-child,
+  .schedule-table td:first-child {
+    width: 25%;
+  }
+
+  /* Adjust header text sizes too */
+  h1, h2 {
+    font-size: 1.4rem;
+    text-align: center;
+  }
+
+  /* Optional: reduce overall padding */
+  body {
+    padding: 20px 10px;
+  }
+}
+
 
   </style>
 </head>
@@ -645,6 +686,7 @@
   </script>
 </body>
 </html>
+
 
 
 
