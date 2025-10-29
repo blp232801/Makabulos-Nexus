@@ -300,6 +300,43 @@
     padding: 20px 10px;
   }
 }
+    /* ✅ FIX: Make homework schedule table fully visible on mobile */
+@media (max-width: 700px) {
+  table, 
+  .schedule-table, 
+  .calendar, 
+  .homework-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table::-webkit-scrollbar,
+  .schedule-table::-webkit-scrollbar,
+  .calendar::-webkit-scrollbar,
+  .homework-table::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  table::-webkit-scrollbar-thumb,
+  .schedule-table::-webkit-scrollbar-thumb,
+  .calendar::-webkit-scrollbar-thumb,
+  .homework-table::-webkit-scrollbar-thumb {
+    background: #006400;
+    border-radius: 10px;
+  }
+
+  table th, 
+  table td,
+  .schedule-table th, 
+  .schedule-table td {
+    font-size: 0.75rem;
+    padding: 6px 8px;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -608,5 +645,6 @@
   </script>
 </body>
 </html>
+
 
 
