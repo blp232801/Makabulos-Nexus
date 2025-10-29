@@ -519,9 +519,9 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getDatabase, ref, get, set, onValue, update } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+import { getDatabase, ref, get, set, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
-// ✅ Firebase config
+// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyBn7cSXwAAm6f5vhUQw3IIHoCoTUJ4G6dc",
   authDomain: "poll-cc59a.firebaseapp.com",
@@ -539,13 +539,11 @@ const db = getDatabase(app);
 const pollForm = document.getElementById('pollForm');
 const resultsList = document.getElementById('resultsList');
 const removeBtn = document.getElementById('removeVoteBtn');
-
 const pollRef = ref(db, 'pollVotes');
 
-// Track user vote locally
 let userVote = localStorage.getItem('userVote');
 
-// ✅ Show live results
+// Display live results
 onValue(pollRef, (snapshot) => {
   const votes = snapshot.val() || {
     "Sports Day": 0,
@@ -553,34 +551,28 @@ onValue(pollRef, (snapshot) => {
     "Science Fair": 0,
     "Art Competition": 0
   };
-  displayResults(votes);
-
-  // Show remove button if user has voted
-  if (userVote) removeBtn.style.display = 'inline-block';
-});
-
-function displayResults(votes) {
   resultsList.innerHTML = '';
   const total = Object.values(votes).reduce((a,b)=>a+b,0);
-  for (const [opt, count] of Object.entries(votes)) {
-    const percent = total ? ((count / total) * 100).toFixed(1) : 0;
+  for (const [opt,count] of Object.entries(votes)) {
+    const percent = total ? ((count/total)*100).toFixed(1) : 0;
     resultsList.innerHTML += `
       <li>
-        <div style="display:flex;justify-content:space-between;">
-          <strong>${opt}</strong>
-          <span>${count} (${percent}%)</span>
+        <div style="display:flex; justify-content:space-between;">
+          <strong>${opt}</strong> <span>${count} (${percent}%)</span>
         </div>
-        <div class="bar" style="width:${percent}%;height:15px;border-radius:6px;margin-top:6px;"></div>
-      </li>`;
+        <div class="bar" style="width:${percent}%; height:15px; background:green; border-radius:6px; margin-top:6px;"></div>
+      </li>
+    `;
   }
-}
+  removeBtn.style.display = userVote ? 'inline-block' : 'none';
+});
 
-// ✅ Submit vote
+// Submit vote
 pollForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const choice = new FormData(pollForm).get('event');
-  if (!choice) return alert("Please select an option!");
-  if (userVote) return alert("You already voted! Remove your previous vote first.");
+  if (!choice) return alert("Select an option!");
+  if (userVote) return alert("You already voted!");
 
   const snapshot = await get(pollRef);
   const votes = snapshot.val() || {};
@@ -590,27 +582,25 @@ pollForm.addEventListener('submit', async (e) => {
   userVote = choice;
   localStorage.setItem('userVote', userVote);
   removeBtn.style.display = 'inline-block';
-
-  alert("✅ Vote counted! Thank you!");
   pollForm.reset();
+  alert("Vote counted!");
 });
 
-// ✅ Remove vote
+// Remove vote
 removeBtn.addEventListener('click', async () => {
   if (!userVote) return;
 
   const snapshot = await get(pollRef);
   const votes = snapshot.val() || {};
   if (votes[userVote] > 0) votes[userVote] -= 1;
-
   await set(pollRef, votes);
 
-  userVote = null;
   localStorage.removeItem('userVote');
+  userVote = null;
   removeBtn.style.display = 'none';
-
-  alert("❌ Your vote has been removed.");
+  alert("Vote removed!");
 });
 </script>
 </body>
 </html>
+
