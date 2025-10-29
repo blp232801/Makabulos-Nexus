@@ -517,67 +517,73 @@
     <p><a href="https://www.facebook.com/people/Makabulos-Nexus/61582690900608/">Privacy Policy</a> | <a href="https://www.facebook.com/people/Makabulos-Nexus/61582690900608/">Contact Us</a></p>
   </footer>
 
-<script>
-    const pollForm = document.getElementById('pollForm');
-    const resultsList = document.getElementById('resultsList');
-    const removeVoteBtn = document.getElementById('removeVoteBtn');
-    const pollKey = 'makabulosPollVotes';
+<script type="module">
+  // ✅ Import Firebase (works in browser)
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getDatabase, ref, get, set, update, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
-    // keep the same initial options and counts
-    let votes = JSON.parse(localStorage.getItem(pollKey)) || {
+  // ✅ Your Firebase Config (replace with your project info)
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyBn7cSXwAAm6f5vhUQw3IIHoCoTUJ4G6dc",
+  authDomain: "poll-cc59a.firebaseapp.com",
+  databaseURL: "https://poll-cc59a-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "poll-cc59a",
+  storageBucket: "poll-cc59a.firebasestorage.app",
+  messagingSenderId: "109784141891",
+  appId: "1:109784141891:web:ed87e81cf966faaf3bc4f6",
+  measurementId: "G-B6F29X0YR5"
+};
+  // ✅ Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  const pollForm = document.getElementById('pollForm');
+  const resultsList = document.getElementById('resultsList');
+
+  // ✅ Fetch and display results
+  const pollRef = ref(db, 'pollVotes');
+  onValue(pollRef, (snapshot) => {
+    const votes = snapshot.val() || {
       "Sports Day": 0,
       "Cultural Festival": 0,
       "Science Fair": 0,
       "Art Competition": 0
     };
+    displayResults(votes);
+  });
 
-    // Helper: writes UI results
-    function displayResults() {
-      resultsList.innerHTML = '';
-      const totalVotes = Object.values(votes).reduce((a,b) => a+b, 0);
-      for (const [option, count] of Object.entries(votes)) {
-        const percent = totalVotes ? ((count / totalVotes) * 100).toFixed(1) : 0;
-        // create accessible list item and animated bar
-        const li = document.createElement('li');
-        li.innerHTML = `
-          <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
-            <strong style="flex:1">${option}:</strong>
-            <span style="white-space:nowrap;">${count} vote${count !== 1 ? 's' : ''} (${percent}%)</span>
+  function displayResults(votes) {
+    resultsList.innerHTML = '';
+    const total = Object.values(votes).reduce((a,b)=>a+b,0);
+    for (const [opt, count] of Object.entries(votes)) {
+      const percent = total ? ((count / total) * 100).toFixed(1) : 0;
+      resultsList.innerHTML += `
+        <li>
+          <div style="display:flex;justify-content:space-between;">
+            <strong>${opt}</strong>
+            <span>${count} (${percent}%)</span>
           </div>
-          <div class="bar" style="width:${percent}%; height:15px; border-radius:6px; margin-top:8px;"></div>
-        `;
-        resultsList.appendChild(li);
-      }
+          <div class="bar" style="width:${percent}%;height:15px;border-radius:6px;margin-top:6px;"></div>
+        </li>`;
     }
+  }
 
-    // Initial render
-    displayResults();
+  // ✅ Handle voting
+  pollForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const choice = new FormData(pollForm).get('event');
+    if (!choice) return alert("Please select an option!");
 
-    // Submit handler: allows voting multiple times (increments the count and persists)
-    pollForm.addEventListener('submit', e => {
-      e.preventDefault();
-      const formData = new FormData(pollForm);
-      const selectedOption = formData.get('event');
+    const snapshot = await get(pollRef);
+    const votes = snapshot.val() || {};
+    votes[choice] = (votes[choice] || 0) + 1;
+    await set(pollRef, votes);
 
-      if (!selectedOption) {
-        // keep behavior consistent with your original validation
-        return alert('Please select an option to vote.');
-      }
-
-      // Allow multiple votes: just increment and persist
-      if (votes.hasOwnProperty(selectedOption)) {
-        votes[selectedOption]++;
-        localStorage.setItem(pollKey, JSON.stringify(votes));
-        displayResults();
-        pollForm.reset();
-        // friendly confirmation
-        alert('Thank you for voting!');
-      } else {
-        alert('Selected option not recognized.');
-      }
-    });
-
-   
-  </script>
+    alert("✅ Vote counted! Thank you!");
+    pollForm.reset();
+  });
+</script>
 </body>
 </html>
+
