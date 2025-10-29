@@ -166,53 +166,30 @@
     <button class="back-home-btn" onclick="goHome()">Back to Home</button>
   </div>
 
-<!-- Add Firebase SDK scripts in your <head> -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
-<script>
-  // Initialize Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyBn7cSXwAAm6f5vhUQw3IIHoCoTUJ4G6dc",
-    authDomain: "poll-cc59a.firebaseapp.com",
-    databaseURL: "https://poll-cc59a-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "poll-cc59a",
-    storageBucket: "poll-cc59a.firebasestorage.app",
-    messagingSenderId: "109784141891",
-    appId: "1:109784141891:web:ed87e81cf966faaf3bc4f6",
-    measurementId: "G-B6F29X0YR5"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-
-  function unlock() {
-    const password = document.getElementById('adminPassword').value;
-    if (password === "Makabulos1939") {
-      document.getElementById('lockScreen').style.display = 'none';
-      document.getElementById('listContainer').style.display = 'block';
-      loadRegistrations();
-    } else {
-      document.getElementById('errorMsg').textContent = "Incorrect password!";
+  <script>
+    function unlock() {
+      const password = document.getElementById('adminPassword').value;
+      if (password === "Makabulos1939") {
+        document.getElementById('lockScreen').style.display = 'none';
+        document.getElementById('listContainer').style.display = 'block';
+        loadRegistrations();
+      } else {
+        document.getElementById('errorMsg').textContent = "Incorrect password!";
+      }
     }
-  }
-
-  function goToForm() {
-    window.location.href = "registration.html"; 
-  }
-  function goHome() {
-    window.location.href = "index.html"; 
-  }
-
-  function loadRegistrations() {
-    const list = document.getElementById('registrationsList');
-    list.innerHTML = '';
-
-    db.ref('registrations').once('value', snapshot => {
-      const submissions = snapshot.val();
-      if (!submissions) {
+    function goToForm() {
+      window.location.href = "registration.html"; 
+    }
+    function goHome() {
+      window.location.href = "index.html"; 
+    }
+    function loadRegistrations() {
+      const submissions = JSON.parse(localStorage.getItem('registrations')) || [];
+      const list = document.getElementById('registrationsList');
+      if (submissions.length === 0) {
         list.innerHTML = '<p class="empty">No registrations submitted yet.</p>';
       } else {
-        Object.values(submissions).forEach(sub => {
+        submissions.forEach(sub => {
           const card = document.createElement('div');
           card.className = 'card';
           card.innerHTML = `
@@ -227,10 +204,7 @@
           list.appendChild(card);
         });
       }
-    });
-  }
-</script>
+    }
+  </script>
 </body>
-</html>
-
-
+</html> 
