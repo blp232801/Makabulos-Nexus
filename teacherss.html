@@ -411,6 +411,31 @@
     height: 60px;
   }
 }
+    /* ✅ SHRINK TEACHER SCHEDULE TABLE FOR MOBILE */
+@media (max-width: 600px) {
+  .schedule-table {
+    font-size: 0.65rem;
+    width: 100%;
+    table-layout: fixed;
+    word-wrap: break-word;
+  }
+
+  .schedule-table th, 
+  .schedule-table td {
+    padding: 4px 3px;
+  }
+
+  .schedule-table th:first-child,
+  .schedule-table td:first-child {
+    width: 25%;
+    white-space: nowrap;
+  }
+
+  .schedule-table th:not(:first-child),
+  .schedule-table td:not(:first-child) {
+    width: auto;
+  }
+}
   </style>
 </head>
 
@@ -1092,4 +1117,5 @@
 </body>
 
 </html> 
+
 
