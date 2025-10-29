@@ -517,73 +517,94 @@
     <p><a href="https://www.facebook.com/people/Makabulos-Nexus/61582690900608/">Privacy Policy</a> | <a href="https://www.facebook.com/people/Makabulos-Nexus/61582690900608/">Contact Us</a></p>
   </footer>
 
+<!-- REPLACE your existing <script type="module">...</script> with this block -->
 <script type="module">
-  // ✅ Import Firebase (works in browser)
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { getDatabase, ref, get, set, update, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+  import { getDatabase, ref, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
-  // ✅ Your Firebase Config (replace with your project info)
-const firebaseConfig = {
-  apiKey: "AIzaSyBn7cSXwAAm6f5vhUQw3IIHoCoTUJ4G6dc",
-  authDomain: "poll-cc59a.firebaseapp.com",
-  projectId: "poll-cc59a",
-  storageBucket: "poll-cc59a.firebasestorage.app",
-  messagingSenderId: "109784141891",
-  appId: "1:109784141891:web:ed87e81cf966faaf3bc4f6",
-  measurementId: "G-B6F29X0YR5"
-};
-  // ✅ Initialize Firebase
+  // --- FULL firebaseConfig (includes databaseURL) ---
+  const firebaseConfig = {
+    apiKey: "AIzaSyBn7cSXwAAm6f5vhUQw3IIHoCoTUJ4G6dc",
+    authDomain: "poll-cc59a.firebaseapp.com",
+    databaseURL: "https://poll-cc59a-default-rtdb.firebaseio.com",
+    projectId: "poll-cc59a",
+    storageBucket: "poll-cc59a.firebasestorage.app",
+    messagingSenderId: "109784141891",
+    appId: "1:109784141891:web:ed87e81cf966faaf3bc4f6",
+    measurementId: "G-B6F29X0YR5"
+  };
+
+  // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
+  const pollRootRef = ref(db, 'pollVotes');
 
-  const pollForm = document.getElementById('pollForm');
-  const resultsList = document.getElementById('resultsList');
+  // Wait until DOM is ready so elements exist
+  window.addEventListener('DOMContentLoaded', () => {
+    const pollForm = document.getElementById('pollForm');
+    const resultsList = document.getElementById('resultsList');
 
-  // ✅ Fetch and display results
-  const pollRef = ref(db, 'pollVotes');
-  onValue(pollRef, (snapshot) => {
-    const votes = snapshot.val() || {
-      "Sports Day": 0,
-      "Cultural Festival": 0,
-      "Science Fair": 0,
-      "Art Competition": 0
-    };
-    displayResults(votes);
-  });
-
-  function displayResults(votes) {
-    resultsList.innerHTML = '';
-    const total = Object.values(votes).reduce((a,b)=>a+b,0);
-    for (const [opt, count] of Object.entries(votes)) {
-      const percent = total ? ((count / total) * 100).toFixed(1) : 0;
-      resultsList.innerHTML += `
-        <li>
-          <div style="display:flex;justify-content:space-between;">
-            <strong>${opt}</strong>
-            <span>${count} (${percent}%)</span>
-          </div>
-          <div class="bar" style="width:${percent}%;height:15px;border-radius:6px;margin-top:6px;"></div>
-        </li>`;
+    if (!pollForm || !resultsList) {
+      console.error("Poll elements not found in DOM (pollForm/resultsList).");
+      return;
     }
-  }
 
-  // ✅ Handle voting
-  pollForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const choice = new FormData(pollForm).get('event');
-    if (!choice) return alert("Please select an option!");
+    // Listen for live updates and render results
+    onValue(pollRootRef, (snapshot) => {
+      const votes = snapshot.val() || {
+        "Sports Day": 0,
+        "Cultural Festival": 0,
+        "Science Fair": 0,
+        "Art Competition": 0
+      };
+      renderResults(votes);
+    }, (error) => {
+      console.error("Firebase onValue error:", error);
+    });
 
-    const snapshot = await get(pollRef);
-    const votes = snapshot.val() || {};
-    votes[choice] = (votes[choice] || 0) + 1;
-    await set(pollRef, votes);
+    function renderResults(votes) {
+      resultsList.innerHTML = '';
+      const total = Object.values(votes).reduce((a,b) => a + (Number(b)||0), 0);
+      for (const [option, countRaw] of Object.entries(votes)) {
+        const count = Number(countRaw) || 0;
+        const percent = total ? ((count / total) * 100).toFixed(1) : 0;
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <strong>${option}</strong>
+            <span style="white-space:nowrap;">${count} (${percent}%)</span>
+          </div>
+          <div class="bar" style="width:${percent}%;height:15px;border-radius:6px;margin-top:6px;background:linear-gradient(to right, rgba(40,167,69,0.95), rgba(0,100,0,0.9));"></div>
+        `;
+        resultsList.appendChild(li);
+      }
+    }
 
-    alert("✅ Vote counted! Thank you!");
-    pollForm.reset();
+    // Use runTransaction to increment safely (prevents race conditions)
+    pollForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const choice = new FormData(pollForm).get('event');
+      if (!choice) {
+        alert("Please select an option!");
+        return;
+      }
+
+      const choiceRef = ref(db, `pollVotes/${choice}`);
+      try {
+        await runTransaction(choiceRef, (currentValue) => {
+          return (currentValue || 0) + 1;
+        });
+        alert("✅ Vote counted! Thank you!");
+        pollForm.reset();
+      } catch (err) {
+        console.error("Transaction failed:", err);
+        alert("Sorry — could not record your vote. Check console for details.");
+      }
+    });
   });
 </script>
-</body>
-</html>
+
+
 
 
 
