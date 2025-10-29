@@ -10,7 +10,6 @@
       --primary: #006400;
       --secondary: #228b22;
       --accent: #00c853;
-      --light-bg: #f9f9f9;
       --card-bg: rgba(255,255,255,0.7);
       --shadow: 0 8px 20px rgba(0,0,0,0.15);
       --radius: 16px;
@@ -21,7 +20,6 @@
       margin: 0;
       font-family: 'Montserrat', sans-serif;
       min-height: 100vh;
-      overflow-y: auto;
       display: flex;
       justify-content: center;
       align-items: flex-start;
@@ -141,10 +139,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
   </style>
-
-  <!-- Firebase SDK scripts -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
   <div class="form-container">
@@ -190,6 +184,9 @@
     <button class="home-btn" onclick="viewSubmissions()">View Submitted Form</button>
   </div>
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script>
     // Initialize Firebase
     const firebaseConfig = {
@@ -205,9 +202,10 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // Form submit
-    document.getElementById('registrationForm').addEventListener('submit', function(e) {
+    const form = document.getElementById('registrationForm');
+    form.addEventListener('submit', function(e) {
       e.preventDefault();
+
       const data = {
         name: document.getElementById('studentName').value,
         grade: document.getElementById('gradeLevel').value,
@@ -220,6 +218,7 @@
 
       db.ref('registrations').push(data)
         .then(() => {
+          alert("Registration submitted successfully!");
           window.location.href = "submitted.html"; // redirect after saving
         })
         .catch(err => alert("Error saving registration: " + err));
