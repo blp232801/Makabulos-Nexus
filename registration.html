@@ -186,6 +186,22 @@
   </div>
 
   <script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBn7cSXwAAm6f5vhUQw3IIHoCoTUJ4G6dc",
+    authDomain: "poll-cc59a.firebaseapp.com",
+    databaseURL: "https://poll-cc59a-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "poll-cc59a",
+    storageBucket: "poll-cc59a.firebasestorage.app",
+    messagingSenderId: "109784141891",
+    appId: "1:109784141891:web:ed87e81cf966faaf3bc4f6",
+    measurementId: "G-B6F29X0YR5"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  
     document.getElementById('registrationForm').addEventListener('submit', function(e) {
       e.preventDefault();
       const data = {
@@ -212,6 +228,7 @@
   </script>
 </body>
 </html>
+
 
 
 
