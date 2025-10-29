@@ -141,6 +141,10 @@
       to { opacity: 1; transform: translateY(0); }
     }
   </style>
+
+  <!-- Firebase SDK scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
   <div class="form-container">
@@ -181,27 +185,27 @@
 
       <button type="submit" class="submit-btn">Submit Registration</button>
     </form>
+
     <button class="home-btn" onclick="goHome()">Back to Home</button>
     <button class="home-btn" onclick="viewSubmissions()">View Submitted Form</button>
   </div>
 
   <script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyBn7cSXwAAm6f5vhUQw3IIHoCoTUJ4G6dc",
-    authDomain: "poll-cc59a.firebaseapp.com",
-    databaseURL: "https://poll-cc59a-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "poll-cc59a",
-    storageBucket: "poll-cc59a.firebasestorage.app",
-    messagingSenderId: "109784141891",
-    appId: "1:109784141891:web:ed87e81cf966faaf3bc4f6",
-    measurementId: "G-B6F29X0YR5"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-  
+    // Initialize Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyBn7cSXwAAm6f5vhUQw3IIHoCoTUJ4G6dc",
+      authDomain: "poll-cc59a.firebaseapp.com",
+      databaseURL: "https://poll-cc59a-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "poll-cc59a",
+      storageBucket: "poll-cc59a.firebasestorage.app",
+      messagingSenderId: "109784141891",
+      appId: "1:109784141891:web:ed87e81cf966faaf3bc4f6",
+      measurementId: "G-B6F29X0YR5"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // Form submit
     document.getElementById('registrationForm').addEventListener('submit', function(e) {
       e.preventDefault();
       const data = {
@@ -213,22 +217,21 @@
         parent: document.getElementById('parentName').value,
         contact: document.getElementById('contactNumber').value
       };
+
       db.ref('registrations').push(data)
-    .then(() => {
-      window.location.href = "submitted.html"; // redirect after saving
-    })
-    .catch(err => alert("Error saving registration: " + err));
-});
+        .then(() => {
+          window.location.href = "submitted.html"; // redirect after saving
+        })
+        .catch(err => alert("Error saving registration: " + err));
+    });
+
     function goHome() {
       window.location.href = "index.html";
     }
+
     function viewSubmissions() {
-    window.location.href = "submitted.html";
-  }
+      window.location.href = "submitted.html";
+    }
   </script>
 </body>
 </html>
-
-
-
-
