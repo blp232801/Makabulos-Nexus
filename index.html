@@ -128,36 +128,34 @@
   transform: translateY(-2px) scale(1.05);
   box-shadow: 0 8px 20px rgba(0, 50, 0, 0.6);
 }
+.header-medal {
+  position: absolute;
+  right: 24px;
+  top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
+.header-medal img {
+  height: 58px;
+  width: 58px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, gold 40%, #d4af37 70%, #b8860b 100%);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  animation: medalFloat 5s ease-in-out infinite;
+  transition: transform 0.3s ease;
+}
 
-  
-    .medal-icon {
-      position: fixed; 
-      top: calc(72px + 8px); 
-      right: 18px;
-      z-index: 1100;
-      transition: transform var(--transition), opacity var(--transition);
-      will-change: transform;
-      filter: drop-shadow(0 8px 18px rgba(0,0,0,.25));
-    }
-    .medal-icon img {
-      height: 56px;
-      width:56px;
-      border-radius: 12px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-      padding:6px;
-      transition: transform 260ms ease, rotate 260ms ease;
-      transform-origin: center;
-      display:block;
-    }
-    
-    @keyframes medalBreathe {
-      0% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-6px) rotate(4deg); }
-      100% { transform: translateY(0) rotate(0deg); }
-    }
-    .medal-icon img { animation: medalBreathe 6s ease-in-out infinite; }
-    .medal-icon img:hover { transform: scale(1.12) rotate(8deg); }
+.header-medal img:hover {
+  transform: scale(1.15) rotate(6deg);
+}
+
+@keyframes medalFloat {
+  0% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-6px) rotate(3deg); }
+  100% { transform: translateY(0) rotate(0deg); }
+}
 
     .hero {
       background: url("school.png") center/cover no-repeat;
@@ -409,17 +407,20 @@
   <div class="particle"></div>
   <div class="particle"></div>
   <div class="particle"></div>
+<header>
+  <div class="logo-container">
+    <img src="logooo.png" alt="Makabulos Logo" />
+    <h1>Makabulos Memorial High School</h1>
+  </div>
 
-  <header>
-    <div class="logo-container">
-      <img src="logooo.png" alt="Makabulos Logo" />
-      <h1>Makabulos Memorial High School</h1>
-    </div>
-    <a href="pick.html" class="top-picks-btn">MR &amp; MS MAKABULOS TOP PICKS</a>
-    <a href="registration.html" class="register-btn">REGISTER NOW!</a>
-  </header>
+  <a href="pick.html" class="top-picks-btn">MR &amp; MS MAKABULOS TOP PICKS</a>
+  <a href="registration.html" class="register-btn">REGISTER NOW!</a>
 
-
+  <!-- Medal Icon (fixed version) -->
+  <div class="header-medal">
+    <img src="https://cdn-icons-png.flaticon.com/512/2972/2972196.png" alt="Medal Icon" />
+  </div>
+</header>
   <a href="medal.html" class="medal-icon" aria-label="Medal and awards">
     <img src="https://cdn-icons-png.flaticon.com/512/2972/2972196.png" alt="Medal Icon" />
   </a>
@@ -586,4 +587,5 @@ const firebaseConfig = {
 </script>
 </body>
 </html>
+
 
