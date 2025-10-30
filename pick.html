@@ -459,7 +459,6 @@ body::after {
 <div class="sparkle" style="left:70%;animation-delay:1s;"></div>
 <div class="sparkle" style="left:90%;animation-delay:3s;"></div>
 
-<!-- Add Firebase SDK scripts in your <head> -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
@@ -478,76 +477,105 @@ body::after {
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
+  const maleCards = document.querySelectorAll('#male-candidates .card');
+  const femaleCards = document.querySelectorAll('#female-candidates .card');
   const allCards = document.querySelectorAll('.card');
 
-  // Fetch votes from Firebase on page load
+  // Fetch votes on page load
   allCards.forEach(card => {
     const id = card.dataset.id;
     db.ref('votes/' + id).get().then(snapshot => {
-      if(snapshot.exists()){
+      if (snapshot.exists()) {
         card.querySelector('.votes').textContent = `Votes: ${snapshot.val()}`;
       }
     });
   });
 
-  // Update crown based on votes
-  function updateCrown(cards){
-    let maxVotes = -1, topCard = null;
-    cards.forEach(card=>{
-      const votes = parseInt(card.querySelector('.votes').textContent.replace('Votes: ',''));
-      if(votes > maxVotes){ maxVotes = votes; topCard = card; }
-    });
-    cards.forEach(card=>{
-      const crown = card.querySelector('.crown');
-      const votes = parseInt(card.querySelector('.votes').textContent.replace('Votes: ',''));
-      if(card === topCard && votes > 0){
-        if(!crown){
-          const img = document.createElement('img');
-          img.src='https://cdn-icons-png.flaticon.com/512/1828/1828884.png';
-          img.className='crown';
-          card.querySelector('.card-content').appendChild(img);
-        }
-      } else if(crown){ crown.remove(); }
-    });
+  // Add / update top pick star (separate for male & female)
+  function updateStars(maleCards, femaleCards) {
+    function setTopStar(cards, icon) {
+      let maxVotes = -1, topCard = null;
+      cards.forEach(card => {
+        const votes = parseInt(card.querySelector('.votes').textContent.replace('Votes: ', '')) || 0;
+        if (votes > maxVotes) { maxVotes = votes; topCard = card; }
+      });
+      cards.forEach(card => {
+        const star = card.querySelector('.top-star');
+        const votes = parseInt(card.querySelector('.votes').textContent.replace('Votes: ', '')) || 0;
+        if (card === topCard && votes > 0) {
+          if (!star) {
+            const img = document.createElement('img');
+            img.src = icon;
+            img.className = 'top-star';
+            img.style.position = 'absolute';
+            img.style.top = '10px';
+            img.style.right = '15px';
+            img.style.width = '28px';
+            img.style.height = '28px';
+            img.style.zIndex = '3';
+            img.style.animation = 'pulseStar 2s infinite alternate';
+            card.querySelector('.card-content').appendChild(img);
+          }
+        } else if (star) { star.remove(); }
+      });
+    }
+
+    setTopStar(maleCards, 'https://cdn-icons-png.flaticon.com/512/616/616490.png'); // Gold star for males
+    setTopStar(femaleCards, 'https://cdn-icons-png.flaticon.com/512/616/616408.png'); // Pink star for females
   }
 
   // Vote button click
-  document.querySelectorAll('.vote-btn').forEach(btn=>{
-    btn.addEventListener('click', e=>{
+  document.querySelectorAll('.vote-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
       e.stopPropagation();
       const card = btn.closest('.card');
       const id = card.dataset.id;
 
       const votesRef = db.ref('votes/' + id);
       votesRef.transaction(current => (current || 0) + 1, (error, committed, snapshot) => {
-        if(error){ console.error('Vote failed', error); }
-        else { card.querySelector('.votes').textContent = `Votes: ${snapshot.val()}`; updateCrown(allCards); }
+        if (error) {
+          console.error('Vote failed', error);
+        } else {
+          card.querySelector('.votes').textContent = `Votes: ${snapshot.val()}`;
+          updateStars(maleCards, femaleCards);
+        }
       });
     });
   });
 
-  // Expand card info
-  document.querySelectorAll('.card').forEach(card=>{
-    card.addEventListener('click', e=>{
-      if(e.target.closest('.vote-btn')) return;
+  // Expand candidate info on card click
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('click', e => {
+      if (e.target.closest('.vote-btn')) return;
       card.classList.toggle('expanded');
     });
   });
 
-  // Initial crown update
-  updateCrown(allCards);
-
   // Listen for real-time updates
-  db.ref('votes').on('value', snapshot=>{
+  db.ref('votes').on('value', snapshot => {
     snapshot.forEach(child => {
       const id = child.key;
       const votes = child.val();
       const card = document.querySelector(`.card[data-id='${id}']`);
-      if(card){ card.querySelector('.votes').textContent = `Votes: ${votes}`; }
+      if (card) card.querySelector('.votes').textContent = `Votes: ${votes}`;
     });
-    updateCrown(allCards);
+    updateStars(maleCards, femaleCards);
   });
+
+  // Initial star update
+  updateStars(maleCards, femaleCards);
+
+  // Star pulse animation
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes pulseStar {
+      0% { transform: scale(1); filter: drop-shadow(0 0 4px gold); }
+      100% { transform: scale(1.2); filter: drop-shadow(0 0 12px gold); }
+    }
+  `;
+  document.head.appendChild(style);
 </script>
 </body>
 </html>
+
 
