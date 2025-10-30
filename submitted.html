@@ -166,7 +166,25 @@
     <button class="back-home-btn" onclick="goHome()">Back to Home</button>
   </div>
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
   <script>
+    // Firebase config (same as registration)
+    const firebaseConfig = {
+      apiKey: "AIzaSyBn7cSXwAAm6f5vhUQw3IIHoCoTUJ4G6dc",
+      authDomain: "poll-cc59a.firebaseapp.com",
+      databaseURL: "https://poll-cc59a-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "poll-cc59a",
+      storageBucket: "poll-cc59a.firebasestorage.app",
+      messagingSenderId: "109784141891",
+      appId: "1:109784141891:web:ed87e81cf966faaf3bc4f6",
+      measurementId: "G-B6F29X0YR5"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
     function unlock() {
       const password = document.getElementById('adminPassword').value;
       if (password === "Makabulos1939") {
@@ -177,34 +195,47 @@
         document.getElementById('errorMsg').textContent = "Incorrect password!";
       }
     }
+
     function goToForm() {
       window.location.href = "registration.html"; 
     }
+
     function goHome() {
       window.location.href = "index.html"; 
     }
+
+    // ✅ Load data directly from Firebase
     function loadRegistrations() {
-      const submissions = JSON.parse(localStorage.getItem('registrations')) || [];
       const list = document.getElementById('registrationsList');
-      if (submissions.length === 0) {
-        list.innerHTML = '<p class="empty">No registrations submitted yet.</p>';
-      } else {
-        submissions.forEach(sub => {
-          const card = document.createElement('div');
-          card.className = 'card';
-          card.innerHTML = `
-            <p><strong>Name:</strong> ${sub.name}</p>
-            <p><strong>Grade:</strong> ${sub.grade}</p>
-            <p><strong>DOB:</strong> ${sub.dob}</p>
-            <p><strong>Gender:</strong> ${sub.gender}</p>
-            <p><strong>Address:</strong> ${sub.address}</p>
-            <p><strong>Parent/Guardian:</strong> ${sub.parent}</p>
-            <p><strong>Contact:</strong> ${sub.contact}</p>
-          `;
-          list.appendChild(card);
+      list.innerHTML = '<p>Loading registrations...</p>';
+
+      db.ref('registrations').once('value')
+        .then(snapshot => {
+          list.innerHTML = '';
+          if (!snapshot.exists()) {
+            list.innerHTML = '<p class="empty">No registrations submitted yet.</p>';
+            return;
+          }
+          snapshot.forEach(child => {
+            const sub = child.val();
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+              <p><strong>Name:</strong> ${sub.name}</p>
+              <p><strong>Grade:</strong> ${sub.grade}</p>
+              <p><strong>DOB:</strong> ${sub.dob}</p>
+              <p><strong>Gender:</strong> ${sub.gender}</p>
+              <p><strong>Address:</strong> ${sub.address}</p>
+              <p><strong>Parent/Guardian:</strong> ${sub.parent}</p>
+              <p><strong>Contact:</strong> ${sub.contact}</p>
+            `;
+            list.appendChild(card);
+          });
+        })
+        .catch(err => {
+          list.innerHTML = `<p class="empty">Error loading data: ${err}</p>`;
         });
-      }
     }
   </script>
 </body>
-</html> 
+</html>
